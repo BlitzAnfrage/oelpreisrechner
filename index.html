@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ölpreisrechner</title>
+  <style>
+    :root{
+      --brand:#6EC054; --brand-2:#4c7f2d; --ink:#1f2937; --muted:#6b7280; --bg:#f5f9f5; --card:#ffffff;
+      --ring:rgba(110,192,84,.25); --shadow:0 12px 30px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--ink);font-weight:450;letter-spacing:.1px}
+
+    /* Header */
+    header{position:relative;background:var(--brand);color:#fff;text-align:center;padding:34px 72px}
+    .logo{height:42px}
+    .back-button{position:absolute;right:72px;top:50%;transform:translateY(-50%);background:#fff;color:var(--brand);padding:10px 18px;border-radius:999px;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:.5rem}
+    .back-button:hover{transform:translateY(-50%) translateY(-1px)}
+    @keyframes floaty{0%,100%{transform:translateY(-50%)}50%{transform:translateY(calc(-50% - 2px))}}
+    .back-button.animate{animation:floaty 3s ease-in-out infinite}
+
+    /* Hero */
+    .hero{background:#fff;border-bottom:1px solid #ecf2ea;padding:2.25rem 1rem 1.75rem}
+    .hero h1{margin:0 auto .65rem;max-width:1000px;color:#174a0e;font-size:clamp(1.35rem,2.2vw,2rem);font-weight:750;letter-spacing:.2px}
+    .hero p{margin:.25rem auto 0;max-width:1000px;color:#2b2b2b;font-size:clamp(.95rem,1.3vw,1.05rem);font-weight:450}
+
+    /* Steps */
+    .steps{max-width:1000px;margin:1.6rem auto 2.0rem;background:#fff;border:1px solid #e6efe3;border-radius:14px;box-shadow:var(--shadow);padding:1rem 1.25rem}
+    .steps ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:0;padding:0}
+    .steps li{display:flex;gap:.75rem;align-items:flex-start;border-radius:12px;padding:10px}
+    .dot{flex:0 0 30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+    .txt{font-size:.92rem;line-height:1.25}
+    .txt strong{font-weight:700}
+
+    /* Form */
+    .wrap{padding:0 1rem 1rem}
+    .form{max-width:1000px;margin:0 auto;background:var(--card);border:1px solid #e6efe3;border-radius:16px;box-shadow:var(--shadow);padding:24px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:18px}
+    .form-group{display:flex;flex-direction:column}
+    label{font-weight:600;font-size:.93rem;margin-bottom:.35rem}
+    input[type="text"],select{border:1.8px solid #d9e6d4;border-radius:12px;padding:11px 12px;font-size:1rem;outline:none;transition:.2s}
+    input[type="text"]:focus,select:focus{border-color:var(--brand-2);box-shadow:0 0 0 5px var(--ring)}
+
+    /* Range */
+    #oilRange{width:100%;appearance:none;height:10px;border-radius:999px;background:linear-gradient(to right,#60993B 0%,#60993B 0%,#e0e0e0 0%,#e0e0e0 100%);outline:none;cursor:pointer}
+    #oilRange::-webkit-slider-thumb{appearance:none;height:22px;width:22px;border-radius:50%;background:#fff;border:3px solid var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+    #oilRange::-moz-range-thumb{height:22px;width:22px;border-radius:50%;background:#fff;border:3px solid var(--brand)}
+    .value-display{margin-top:8px;background:#eef8e9;border:2px solid #60993B;border-radius:12px;padding:8px 12px;font-weight:700;color:#274e1a;text-align:center;display:inline-block;min-width:120px}
+    .ticks{display:flex;justify-content:space-between;margin-top:8px;color:#48534a;font-weight:650}
+
+    /* Premium card (accessible switch) */
+    .card{border:1px solid #e6efe3;border-radius:14px;background:#f7fbf6;padding:14px 16px}
+    .switch{position:relative;display:inline-block;width:48px;height:28px;vertical-align:middle}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#d9e6d4;border-radius:999px;transition:.2s}
+    .slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;top:3px;background:white;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}
+    .switch input:checked + .slider{background:var(--brand)}
+    .switch input:checked + .slider:before{transform:translateX(20px)}
+    .premium-title{font-weight:700;margin-left:.6rem}
+    .premium-note{color:#334155;margin:.4rem 0 0;font-size:.92rem}
+    details summary{cursor:pointer;color:var(--brand-2);font-weight:700;margin-top:.35rem}
+
+    /* Button */
+    .btn{margin-top:14px;width:100%;background:var(--brand);color:#fff;border:none;border-radius:12px;padding:15px 14px;font-weight:800;font-size:1.05rem;cursor:pointer;transition:transform .03s,background .15s}
+    .btn:hover,.btn:focus{background:var(--brand-2);outline:none}
+    .btn:active{transform:translateY(1px)}
+
+    /* Chart */
+    .chart-card{max-width:1000px;width:calc(100% - 2rem);margin:42px auto 0;background:#fff;border:1px solid #e6efe3;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+    .chart-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+    .chart-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .legend{display:flex;gap:32px;justify-content:center;padding:10px 8px 14px;color:#111827;font-weight:650}
+    .legend .line{width:32px;height:4px;border-radius:2px;display:inline-block}
+    .blue{background:#1d4ed8}.red{background:#dc2626}.yellow{background:#f59e0b}
+
+    /* Footer */
+    footer{background:var(--brand);color:#fff;text-align:center;margin-top:44px;padding:26px 12px}
+
+    /* Responsive tweaks */
+    @media (max-width:900px){
+      header{padding:26px 18px}
+      .back-button{right:18px;font-size:.9rem;padding:8px 12px}
+      .back-button.animate{animation:none} /* ruhiger auf Mobile */
+      .hero{padding:2.0rem 1rem 1.4rem}
+      .steps{margin:1.4rem auto 1.8rem}
+      .steps ol{grid-template-columns:1fr 1fr}
+      .txt{font-size:.95rem}
+      .row{grid-template-columns:1fr;gap:22px}
+    }
+    @media (max-width:520px){
+      .hero h1{font-size:1.35rem}
+      .back-button{font-size:.85rem;padding:7px 10px}
+      .legend{gap:20px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo" src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" alt="Logo Raiffeisenmarkt Wiesbach" />
+    <a class="back-button animate" href="https://www.platzhalter.de">Zurück zur Website</a>
+  </header>
+
+  <section class="hero" aria-labelledby="h1">
+    <h1 id="h1">Heizöl Preisrechner – Raiffeisenmarkt Wiesbach im Saarland</h1>
+    <p>Berechnen Sie Ihren Heizölpreis schnell und bequem – ganz einfach online und sofort verfügbar.</p>
+  </section>
+
+  <section class="steps" aria-label="Schritte">
+    <ol>
+      <li><div class="dot">1</div><div class="txt"><strong>Daten eingeben</strong><br><span>PLZ, Liefermenge & Versandart wählen</span></div></li>
+      <li><div class="dot">2</div><div class="txt"><strong>Preis berechnen</strong><br><span>Individuellen Preis berechnen lassen</span></div></li>
+      <li><div class="dot">3</div><div class="txt"><strong>Bestellung abschicken</strong><br><span>Persönliche Daten bestätigen & Formular verbindlich absenden</span></div></li>
+      <li><div class="dot">4</div><div class="txt"><strong>Lieferung & Zahlung</strong><br><span>Bezahlung bei Lieferung oder per Vorabüberweisung</span></div></li>
+    </ol>
+  </section>
+
+  <section class="wrap">
+    <form id="oilForm" class="form" novalidate>
+      <div class="row">
+        <div class="form-group">
+          <label for="oilRange">Liefermenge (Liter)</label>
+          <input type="range" id="oilRange" min="100" max="15000" step="100" value="4900" oninput="updateSlider(this)">
+          <div class="value-display" id="oilValue">4.900 L</div>
+          <div class="ticks"><span>100</span><span>5.000</span><span>10.000</span><span>15.000</span></div>
+        </div>
+        <div class="form-group">
+          <label for="plz">Postleitzahl</label>
+          <input type="text" id="plz" name="plz" maxlength="5" inputmode="numeric" pattern="\d{5}" required placeholder="z. B. 66557">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="ablade">Anzahl der Abladestellen</label>
+          <select id="ablade" name="ablade" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <!-- Premium Heizöl (ersetzt Area-Preview) -->
+        <div class="form-group">
+          <label>Premium Heizöl</label>
+          <div class="card" role="group" aria-label="Premium Heizöl">
+            <label class="switch" aria-label="Premium Heizöl aktivieren">
+              <input id="premium" type="checkbox" />
+              <span class="slider" aria-hidden="true"></span>
+            </label>
+            <span class="premium-title">Premium Heizöl</span>
+            <p class="premium-note">Aufpreis: +1,50 € je 100&nbsp;L – wird bei der Berechnung berücksichtigt.</p>
+            <details>
+              <summary>Wissenswertes zu Premium Heizöl</summary>
+              <div style="margin-top:.4rem;color:#374151;font-size:.9rem;line-height:1.35">
+                Für alle Ölheizungen geeignet – nach DIN 51603‑1. Das Additivpaket sorgt für reduzierten Verbrauch, längere Lebensdauer der Anlage, geringeren Wartungsaufwand, höhere Betriebssicherheit, angenehmen Geruch und eine umweltschonende Verbrennung (max. 0,005% Schwefel). Der Wirkstoff wird mittels Dosiereinrichtung beim Abtanken beigemischt.
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="submitBtn" type="submit">Preis berechnen</button>
+      <p id="errMsg" style="display:none;color:#b00020;font-weight:700;margin:.6rem 0 0">Die eingegebene PLZ liegt nicht im Liefergebiet.</p>
+    </form>
+  </section>
+
+  <!-- Google Sheets Chart (zentriert, keine Rechtsverschiebung) -->
+  <div class="chart-card">
+    <div class="chart-embed">
+      <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgDaArv9UgKthAI2xg0BfJXxqJ6yUCqQZzlbytuz4KAUEPXKAeyteb45S943v2a_Hq4E2XAvidKalW/pubchart?oid=1568395756&amp;format=interactive" frameborder="0" scrolling="no" title="Preis-Chart"></iframe>
+    </div>
+    <div class="legend">
+      <span><i class="line blue"></i> 7 Tage</span>
+      <span><i class="line red"></i> 14 Tage</span>
+      <span><i class="line yellow"></i> 90 Tage</span>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Raiffeisenmarkt Wiesbach – Alle Rechte vorbehalten</p>
+  </footer>
+
+  <script>
+    // --- Slider-UI ---
+    const oilSlider = document.getElementById('oilRange');
+    const oilValue  = document.getElementById('oilValue');
+    function updateSlider(slider){
+      const value = parseInt(slider.value,10);
+      oilValue.textContent = value.toLocaleString('de-DE') + ' L';
+      const min = parseInt(slider.min,10), max = parseInt(slider.max,10);
+      const pct = ((value - min) / (max - min)) * 100;
+      slider.style.background = `linear-gradient(to right, #60993B 0%, #60993B ${pct}%, #e0e0e0 ${pct}%, #e0e0e0 100%)`;
+    }
+    updateSlider(oilSlider);
+
+    // --- Liefergebiete ---
+    const area1 = ["66260","66262","66265","66272","66273","66274","66275","66280","66281","66282","66284","66287","66288","66289","66292","66293","66294","66295","66299","66337","66338","66340","66341","66346","66511","66512","66513","66514","66515","66516","66517","66518","66519","66520","66521","66522","66531","66538","66539","66540","66549","66550","66552","66553","66557","66558","66559","66560","66564","66565","66566","66567","66571","66572","66573","66575","66578","66579","66580","66583","66584","66585","66587","66589","66591","66592","66593","66594","66595","66596","66597","66630","66631","66632","66633","66636","66641","66642","66643","66646","66791","66792","66793","66807","66809","66811","66812","66813","66814","66819","66822","66832","66833","66835","66836","66839"];
+    const area2 = ["66459","66640","66629","66701","66740","66763","66773","66774","66775","66777","66787","66780","66794","66795","66798","66802","66000","66001","66002","66003","66004","66005","66006","66007","66008","66009","66010","66011","66012","66013","66014","66015","66016","66017","66019","66020","66021","66022","66023","66024","66025","66026","66027","66028","66029","66030","66031","66032","66033","66042","66043","66044","66045","66046","66047","66051","66053","66055","66057","66059","66060","66061","66063","66065","66067","66090","66091","66092","66093","66094","66095","66099","66100","66101","66102","66103","66104","66105","66106","66107","66108","66109","66111","66113","66115","66117","66119","66121","66123","66125","66126","66127","66128","66129","66130","66131","66132","66133","66140","66141","66142","66143","66150","66200","66259","66353","66354","66355","66359","66361","66362","66363","66364","66365","66366","66367","66368","66369","66370","66376","66377","66386","66803","66804","66806","66333"];
+    const area3 = ["66687","66129","66130","66629","66271","66352","66399","66424","66679","66693","66706","66709","66780","66798","66802","66440","66453","66620","66625","66663"];
+    function areaByPlz(plz){
+      if (area1.includes(plz)) return 'Area 1';
+      if (area2.includes(plz)) return 'Area 2';
+      if (area3.includes(plz)) return 'Area 3';
+      return '';
+    }
+
+    // --- Form handling ---
+    const FORM = document.getElementById('oilForm');
+    const BTN  = document.getElementById('submitBtn');
+    const ERR  = document.getElementById('errMsg');
+
+    document.getElementById('plz').addEventListener('input', (e)=>{
+      const plz = e.target.value.replace(/\D+/g,'').slice(0,5);
+      e.target.value = plz; // nur Ziffern zulassen
+      const area = areaByPlz(plz);
+      ERR.style.display = area ? 'none' : (plz.length===5 ? 'block' : 'none');
+    });
+
+    FORM.addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      ERR.style.display = 'none';
+
+      const liefermenge   = parseInt(oilSlider.value,10);
+      const plz           = document.getElementById('plz').value.trim();
+      const abladestellen = parseInt(document.getElementById('ablade').value,10);
+      const premium       = document.getElementById('premium').checked; // NEW: Premium-Flag
+      const area          = areaByPlz(plz);
+
+      if (!area){ ERR.style.display='block'; return; }
+
+      // JSON-Body wie gefordert – Premium separat als bool
+      const payload = { liefermenge, plz, abladestellen, area, premium };
+
+      BTN.disabled = true; BTN.textContent = 'Berechne…';
+      try{
+        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook/oelrechner',{
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const text = await res.text();
+        if(!res.ok) throw new Error('HTTP '+res.status+' | '+text.slice(0,200));
+        let data; try{ data = JSON.parse(text) } catch{ throw new Error('Antwort kein JSON: '+text.slice(0,200)); }
+        const result = Array.isArray(data) ? data[0] : data;
+
+        sessionStorage.setItem('oelForm', JSON.stringify({
+          eingabe: { liefermenge, plz, abladestellen, area, premium },
+          berechnung: result,
+          timestamp: Date.now()
+        }));
+
+        window.location.href = './seite2.html';
+      } catch(err){
+        alert('Fehler: '+err.message);
+      } finally {
+        BTN.disabled = false; BTN.textContent = 'Preis berechnen';
+      }
+    });
+  </script>
+</body>
+</html>
