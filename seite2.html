@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ergebnis Heizölpreis</title>
+<style>
+  :root{
+    --brand:#6EC054; --brand-2:#4c7f2d; --ink:#1f2b1c; --muted:#5c6a60; --bg:#f6faf6; --card:#fff;
+    --ring:rgba(110,192,84,.25); --shadow:0 10px 30px rgba(13,34,16,.08);
+    --ok:#16a34a; --warn:#b45309; --err:#b91c1c;
+    --gap:16px; --radius:14px; --radius-lg:18px; --max:980px; --narrow:760px;
+    --chart-max-width: 1000px;
+  }
+  *{box-sizing:border-box}
+  html{font-size:16px}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+  header{background:linear-gradient(135deg,#6EC054,#5aa742 55%, #4c7f2d);color:#fff;padding:18px 18px;text-align:center}
+  header .wrap-h{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:center;gap:12px}
+  .logo{height:36px}
+
+  .wrap{max-width:var(--max);margin:0 auto;padding:18px}
+  .grid{display:grid;gap:18px}
+
+  .card{background:var(--card);border:1px solid #e2eee1;border-radius:var(--radius);box-shadow:var(--shadow)}
+  .card .hdr{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #eef5ec}
+  .card .hdr h1{margin:0;font-size:1.1rem}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#e8f6e4;color:#134c18;border:1px solid #cfeacc;border-radius:999px;padding:4px 10px;font-weight:700;font-size:.78rem}
+
+  .result{max-width:var(--narrow);margin:0 auto}
+  .result .body{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 16px}
+  .kv{display:grid;gap:10px}
+  .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed #eef2ee}
+  .row:last-child{border-bottom:0}
+  .k{color:var(--muted)} .v{font-weight:700}
+
+  .price-big{display:grid;gap:12px;align-content:start}
+  .price-pill{display:flex;align-items:center;justify-content:center;border:1px solid #def0db;background:#f7fff6;border-radius:12px;padding:16px 10px;font-weight:800;font-size:1.2rem}
+  .price-big small{color:var(--muted)}
+
+  .total{padding:14px 16px;background:#fbfffb;border-top:1px solid #eef5ec;border-bottom-left-radius:var(--radius);border-bottom-right-radius:var(--radius)}
+  .total h2{margin:0 0 8px 0;font-size:1.2rem}
+
+  .order{max-width:var(--narrow);margin:10px auto 0}
+  .order .body{padding:14px 16px}
+  .order h2{margin:0 0 6px 0;font-size:1.05rem}
+
+  table.sum{width:100%;border-collapse:separate;border-spacing:0 8px;margin:6px 0 14px}
+  .sum th{font-size:.85rem;color:var(--muted);font-weight:700;text-align:left;padding:0 8px}
+  .sum td{background:#fafefa;border:1px solid #e7efe5;padding:10px 8px}
+  .sum tr td:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
+  .sum tr td:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px;text-align:right;font-weight:700}
+  .sum .hint{font-size:.8rem;color:#2c3b30}
+
+  form{display:grid;gap:14px}
+  .fieldset{display:grid;gap:10px;border:1px solid #e5eee3;border-radius:12px;padding:12px;background:#fff}
+  .fieldset legend{font-weight:800;color:#173a11}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{font-weight:600;font-size:.9rem}
+  input[type=text], input[type=email], input[type=tel]{border:1.7px solid #d9e3d3;border-radius:10px;padding:10px 12px;font-size:.95rem;outline:none;transition:.2s;background:#fff}
+  textarea{border:1.7px solid #d9e3d3;border-radius:10px;padding:10px 12px;font-size:.95rem;outline:none;resize:vertical;min-height:80px}
+  input:focus, textarea:focus{border-color:var(--brand-2);box-shadow:0 0 0 4px var(--ring)}
+
+  .radios{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid #e1ebdf;background:#fbfffb;padding:8px 10px;border-radius:999px}
+  .chip input{accent-color:#2c7a19}
+
+  .submit{display:flex;gap:10px;align-items:center}
+  .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:800;font-size:1rem;cursor:pointer}
+  .btn:hover{background:#5aa742}
+  .muted{color:var(--muted);font-size:.85rem}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+
+  .chart-card{max-width:var(--chart-max-width);width:100%;margin:22px auto 16px;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:0 0 8px;border:1px solid #e8efe3;overflow:hidden}
+  .chart-inner{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+  .chart-inner iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+  .legend{display:flex;gap:28px;justify-content:center;padding:8px 8px 12px;color:#333;font-weight:600;font-size:.9rem}
+  .legend .line{width:28px;height:4px;border-radius:2px;display:inline-block}
+  .blue{background:#007bff}.red{background:#dc3545}.yellow{background:#ffc107}
+
+  @media (max-width:760px){
+    .result .body{grid-template-columns:1fr}
+    .row2{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap-h">
+      <img class="logo" src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" alt="Raiffeisenmarkt Wiesbach"/>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Ergebniskarte -->
+    <section id="cardResult" class="card result" aria-labelledby="hResult">
+      <div class="hdr">
+        <h1 id="hResult">Ergebnis Heizölpreis <span id="badgePremium" class="badge" style="display:none">Premium</span></h1>
+        <div class="muted" id="datum"></div>
+      </div>
+      <div class="body">
+        <div class="kv">
+          <div class="row"><div class="k">Daten</div><div class="v"></div></div>
+          <div class="row"><div class="k">PLZ</div><div id="f-plz" class="v">—</div></div>
+          <div class="row"><div class="k">Liefermenge</div><div id="f-menge" class="v">—</div></div>
+          <div class="row"><div class="k">Abladestellen</div><div id="f-ablade" class="v">—</div></div>
+        </div>
+        <div class="price-big">
+          <div><div class="k">Preis pro 100 L (inkl. aller Auf-/Abschläge)</div></div>
+          <div id="f-pp100" class="price-pill">—</div>
+          <small class="muted">Der Preis je Liter wird in der Gesamtsumme berücksichtigt.</small>
+        </div>
+      </div>
+      <div class="total">
+        <h2>Zusammenfassung</h2>
+        <div class="row"><div class="k">Warenwert netto</div><div id="f-netto" class="v">—</div></div>
+        <div class="row"><div class="k">Gefahrgutzuschläge / Lieferpauschale</div><div id="f-pauschale" class="v">—</div></div>
+        <div class="row"><div class="k">Zwischensumme netto</div><div id="f-zwischensumme" class="v">—</div></div>
+        <div class="row"><div class="k">zzgl. MwSt.</div><div id="f-mwst" class="v">—</div></div>
+        <div class="row"><div class="k">Gesamtpreis</div><div id="f-brutto" class="v">—</div></div>
+      </div>
+    </section>
+
+    <!-- Bestellformular -->
+    <section class="card order" aria-labelledby="hOrder">
+      <div class="hdr"><h1 id="hOrder">Jetzt verbindlich bestellen</h1></div>
+      <div class="body">
+        <h2>Bestellübersicht</h2>
+        <table class="sum" aria-describedby="orderTableDesc">
+          <caption id="orderTableDesc" class="visually-hidden" style="position:absolute;left:-9999px">Zusammenfassung der Positionen</caption>
+          <thead>
+            <tr>
+              <th>Menge</th>
+              <th>Beschreibung</th>
+              <th>Einzelpreis</th>
+              <th>Gesamtpreis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="t-menge">—</td>
+              <td>
+                Heizöl EL schwefelarm<br/>
+                <span class="hint">DIN 51603-1</span>
+              </td>
+              <td id="t-pp100">—</td>
+              <td id="t-netto">—</td>
+            </tr>
+            <tr>
+              <td id="t-anzahl">—</td>
+              <td>
+                Gefahrgutzuschläge / Lieferpauschale<br/>
+                <span class="hint">Lieferpauschale in Zukunft sparen?</span>
+              </td>
+              <td id="t-pauschale-einheit">—</td>
+              <td id="t-pauschale-summe">—</td>
+            </tr>
+            <tr>
+              <td colspan="3">Zwischensumme</td>
+              <td id="t-zwischensumme">—</td>
+            </tr>
+            <tr>
+              <td colspan="3" id="t-mwst-label">+ MwSt.</td>
+              <td id="t-mwst">—</td>
+            </tr>
+            <tr>
+              <td colspan="3"><strong>Gesamt</strong></td>
+              <td id="t-brutto"><strong>—</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <form id="orderForm" novalidate>
+          <fieldset class="fieldset">
+            <legend>Zahlungsmethode</legend>
+            <div class="radios">
+              <label class="chip"><input type="radio" name="zahlung" value="Barzahlung" required> Barzahlung</label>
+              <label class="chip"><input type="radio" name="zahlung" value="EC-Karte"> EC‑Karte</label>
+              <label class="chip"><input type="radio" name="zahlung" value="Vorabüberweisung"> Vorabüberweisung</label>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>Lieferzeit</legend>
+            <div class="radios">
+              <label class="chip"><input type="radio" name="lieferzeit" value="ca. 2-3 Wochen" required> ca. 2–3 Wochen</label>
+              <label class="chip"><input type="radio" name="lieferzeit" value="1-2 Werktage (Preis auf Anfrage, ca. +100 €)"> 1–2 Werktage <span class="muted">(Preis auf Anfrage, ca. +100 €)</span></label>
+            </div>
+            <div id="expressHint" class="muted" style="display:none">Hinweis: Express liefert eine Preisbestätigung per Rückruf/E‑Mail.</div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend>Kundendaten</legend>
+            <div class="row2">
+              <div><label for="vorname">Vorname *</label><input id="vorname" name="vorname" type="text" required></div>
+              <div><label for="name">Name *</label><input id="name" name="name" type="text" required></div>
+            </div>
+            <div><label for="firma">Firma</label><input id="firma" name="firma" type="text"></div>
+            <div class="row2">
+              <div><label for="adresse">Adresse *</label><input id="adresse" name="adresse" type="text" required></div>
+              <div><label for="plz">Postleitzahl *</label><input id="plz" name="plz" type="text" pattern="\d{5}" required></div>
+            </div>
+            <div class="row2">
+              <div><label for="stadt">Stadt *</label><input id="stadt" name="stadt" type="text" required></div>
+              <div><label for="email">E‑Mail *</label><input id="email" name="email" type="email" required></div>
+            </div>
+            <div><label for="telefon">Telefonnummer *</label><input id="telefon" name="telefon" type="tel" required></div>
+            <div><label for="bem">Bemerkungen</label><textarea id="bem" name="bem"></textarea></div>
+
+            <label class="chip"><input id="agb" type="checkbox" required> AGB akzeptieren *</label>
+            <label class="chip"><input id="news" type="checkbox"> Newsletter abonnieren</label>
+            <label class="chip"><input id="abo" type="checkbox"> Ich möchte die Lieferpauschale sparen. Bitte informieren Sie mich unverbindlich über die Möglichkeiten des Heizöl‑Abos!</label>
+          </fieldset>
+
+          <div class="submit">
+            <button class="btn" id="sendBtn" type="submit">Jetzt verbindlich bestellen</button>
+            <span id="msg" class="muted"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Diagramm unten wieder anzeigen -->
+    <div class="chart-card">
+      <div class="chart-inner">
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgDaArv9UgKthAI2xg0BfJXxqJ6yUCqQZzlbytuz4KAUEPXKAeyteb45S943v2a_Hq4E2XAvidKalW/pubchart?oid=1568395756&amp;format=interactive" title="Preis-Chart"></iframe>
+      </div>
+      <div class="legend">
+        <span><i class="line blue"></i> 7 Tage</span>
+        <span><i class="line red"></i> 14 Tage</span>
+        <span><i class="line yellow"></i> 90 Tage</span>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const ORDER_WEBHOOK = 'https://n8n.srv899952.hstgr.cloud/webhook/oelrechner-bestellung';
+
+  const fmtEur = v => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(Number(v||0));
+  const fmtNum = v => new Intl.NumberFormat('de-DE').format(Number(v||0));
+
+  function pick(obj, path, d){
+    try{
+      return path.split('.').reduce((a,k)=> (a && a[k]!==undefined)? a[k] : undefined, obj) ?? d;
+    }catch(e){ return d; }
+  }
+
+  // 1) Ergebnis aus Session holen
+  const raw = sessionStorage.getItem('oelForm');
+  if(!raw){
+    alert('Keine Berechnung gefunden. Bitte erneut auf der Startseite berechnen.');
+    location.href = './index.html';
+    return;
+  }
+  let store; try{ store = JSON.parse(raw); } catch{ location.href='./index.html'; return; }
+  const result = Array.isArray(store?.berechnung) ? store.berechnung[0] : (store?.berechnung || {});
+
+  // 2) Daten ableiten
+  const input = result.input || store.eingabe || {};
+  const formatted = result.formatted || {};
+  const totals = result.totals || {};
+  const comps = result.komponentenPro100L || {};
+
+  const liefermengeL = Number(input.liefermengeL || store?.eingabe?.liefermenge || 0);
+  const ablade = Number(input.abladestellen || store?.eingabe?.abladestellen || 1);
+  const plz = String(input.plz || store?.eingabe?.plz || '');
+  const premium = Boolean(input.premium || store?.eingabe?.premium || false);
+
+  const endpreisPro100L = Number(pick(result,'komponentenPro100L.endpreisPro100L',0));
+  const warenwertNetto = Number(pick(result,'totals.warenwertNetto',0));
+  const pauschale = Number(pick(result,'totals.lieferpauschale',0));
+  const pauschaleEinheit = Number(pick(result,'totals.lieferpauschaleEinheit',11));
+  const pauschaleAnzahl = Number(pick(result,'totals.lieferpauschaleAnzahl',ablade));
+  const zwischensumme = Number(pick(result,'totals.zwischensummeNetto', warenwertNetto + pauschale));
+  const mwstSatz = Number(pick(result,'totals.mwstSatz',19));
+  const mwstBetrag = Number(pick(result,'totals.mwstBetrag', zwischensumme * 0.19));
+  const brutto = Number(pick(result,'totals.gesamtBrutto', zwischensumme + mwstBetrag));
+
+  // 3) UI füllen
+  document.getElementById('datum').textContent = new Date().toLocaleDateString('de-DE');
+  if(premium) document.getElementById('badgePremium').style.display='inline-flex';
+
+  document.getElementById('f-plz').textContent   = plz || '—';
+  document.getElementById('f-menge').textContent = fmtNum(liefermengeL) + ' L';
+  document.getElementById('f-ablade').textContent= fmtNum(ablade);
+  document.getElementById('f-pp100').textContent = formatted.endpreisPro100L || fmtEur(endpreisPro100L);
+
+  document.getElementById('f-netto').textContent         = formatted.warenwertNetto || fmtEur(warenwertNetto);
+  document.getElementById('f-pauschale').textContent     = `${fmtNum(pauschaleAnzahl)} × ${fmtEur(pauschaleEinheit)} = ${formatted.lieferpauschale || fmtEur(pauschale)}`;
+  document.getElementById('f-zwischensumme').textContent = formatted.zwischensummeNetto || fmtEur(zwischensumme);
+  document.getElementById('f-mwst').textContent          = `${mwstSatz}% · ${formatted.mwstBetrag || fmtEur(mwstBetrag)}`;
+  document.getElementById('f-brutto').textContent        = formatted.gesamtBrutto || fmtEur(brutto);
+
+  // Bestellübersicht Tabelle
+  document.getElementById('t-menge').textContent = fmtNum(liefermengeL) + ' L';
+  document.getElementById('t-pp100').textContent = formatted.endpreisPro100L || fmtEur(endpreisPro100L);
+  document.getElementById('t-netto').textContent = formatted.warenwertNetto || fmtEur(warenwertNetto);
+
+  document.getElementById('t-anzahl').textContent = fmtNum(pauschaleAnzahl);
+  document.getElementById('t-pauschale-einheit').textContent = fmtEur(pauschaleEinheit);
+  document.getElementById('t-pauschale-summe').textContent   = formatted.lieferpauschale || fmtEur(pauschale);
+  document.getElementById('t-zwischensumme').textContent     = formatted.zwischensummeNetto || fmtEur(zwischensumme);
+  document.getElementById('t-mwst-label').textContent        = `+ MwSt. (${mwstSatz}%)`;
+  document.getElementById('t-mwst').textContent              = formatted.mwstBetrag || fmtEur(mwstBetrag);
+  document.getElementById('t-brutto').textContent            = formatted.gesamtBrutto || fmtEur(brutto);
+
+  // Prefill Kundendaten (PLZ)
+  document.getElementById('plz').value = plz || '';
+
+  // 4) Express-Hinweis schalten
+  document.querySelectorAll('input[name="lieferzeit"]').forEach(r=>{
+    r.addEventListener('change', ()=>{
+      const express = r.value.startsWith('1-2');
+      document.getElementById('expressHint').style.display = express ? 'block' : 'none';
+    });
+  });
+
+  // 5) Bestellung senden
+  const FORM = document.getElementById('orderForm');
+  const BTN  = document.getElementById('sendBtn');
+  const MSG  = document.getElementById('msg');
+
+  FORM.addEventListener('submit', async (ev)=>{
+    ev.preventDefault();
+    MSG.textContent = '';
+    if(!document.getElementById('agb').checked){
+      MSG.textContent = 'Bitte AGB akzeptieren.'; MSG.className='muted err'; return;
+    }
+
+    const fd = new FormData(FORM);
+    const zahlung   = fd.get('zahlung');
+    const lieferzeit= fd.get('lieferzeit');
+
+    // Felder sammeln
+    const kunden = {
+      vorname: fd.get('vorname')||'', name: fd.get('name')||'', firma: fd.get('firma')||'',
+      adresse: fd.get('adresse')||'', plz: fd.get('plz')||'', stadt: fd.get('stadt')||'',
+      email: fd.get('email')||'', telefon: fd.get('telefon')||'', bemerkungen: fd.get('bem')||''
+    };
+
+    const payload = {
+      type: 'bestellung', zeitstempel: new Date().toISOString(),
+      eingaben: { liefermengeL, plz, abladestellen: ablade, premium },
+      preise: {
+        endpreisPro100L, warenwertNetto, lieferpauschaleEinheit: pauschaleEinheit, lieferpauschaleAnzahl: pauschaleAnzahl,
+        lieferpauschale: pauschale, zwischensummeNetto: zwischensumme, mwstSatz, mwstBetrag, gesamtBrutto: brutto
+      },
+      kunden,
+      auswahl: {
+        zahlungsmethode: zahlung, lieferzeit,
+        newsletter: document.getElementById('news').checked,
+        aboHinweis: document.getElementById('abo').checked,
+        agbAkzeptiert: document.getElementById('agb').checked
+      },
+      positionen: [
+        { menge: liefermengeL+' L', beschreibung:'Heizöl EL schwefelarm • DIN 51603-1', einzelpreis: endpreisPro100L, gesamt: warenwertNetto },
+        { menge: pauschaleAnzahl, beschreibung:'Gefahrgutzuschläge / Lieferpauschale', einzelpreis: pauschaleEinheit, gesamt: pauschale }
+      ]
+    };
+
+    BTN.disabled = true; BTN.textContent = 'Sende…';
+    try{
+      const res = await fetch(ORDER_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      const text = await res.text();
+      let data; try{ data = JSON.parse(text); } catch{ data = { ok: res.ok, raw: text }; }
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      MSG.textContent = 'Bestellung eingegangen. Vielen Dank!';
+      MSG.className = 'muted ok';
+      FORM.querySelectorAll('input,textarea,button').forEach(el=> el.disabled = true);
+    }catch(err){
+      MSG.textContent = 'Senden fehlgeschlagen: '+err.message; MSG.className='muted err';
+      BTN.disabled = false; BTN.textContent = 'Jetzt verbindlich bestellen';
+    }
+  });
+})();
+</script>
+</body>
+</html>
