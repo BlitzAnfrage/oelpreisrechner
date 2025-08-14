@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ölpreisrechner – Ergebnis</title>
+  <style>
+    :root{
+      --brand:#6EC054; --brand-dark:#4c7f2d; --ink:#222; --bg:#f7faf7; --card:#ffffff;
+      --muted:#6b6b6b; --ring:rgba(110,192,84,.25); --shadow:0 12px 30px rgba(0,0,0,.08);
+      --chart-shift-x-desktop: 0px;
+      --chart-shift-x-mobile:  -12px;
+      --chart-zoom-desktop:    1;
+      --chart-zoom-mobile:     0.85;
+      --chart-max-width:       1000px;
+    }
+    *{box-sizing:border-box}
+    html{font-size:15px; overflow-x:hidden}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--ink);font-weight:400;overflow-x:hidden}
+
+    /* Header = exakt wie Index */
+    header{background:var(--brand);position:relative;padding:26px 60px;text-align:center;color:#fff}
+    .logo{height:40px}
+
+    /* ▶ Änderung 1: Mehr Abstand zwischen Header und Titel sowie Titel → Inhalt */
+    .hero{padding:2.2rem 1rem 1.8rem;background:#fff;text-align:center;border-bottom:1px solid #eef2ea} /* mehr top- & bottom-padding */
+    .hero h1{color:#18510a;margin:0 0 .6rem 0;font-size:clamp(1.4rem,2.1vw,1.9rem);font-weight:700;letter-spacing:.2px}
+    .hero p{margin:.45rem auto 0;max-width:1000px;color:#2d2d2d;font-size:1rem;font-weight:400}
+
+    .wrap{max-width:980px;margin:0 auto;padding:18px}
+    .grid{display:grid;grid-template-columns:1fr;gap:18px}
+
+    .card{background:var(--card);border:1px solid #e8efe3;border-radius:16px;box-shadow:var(--shadow)}
+    .card .hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #eef5ec}
+    .card .hdr h2{margin:0;font-size:18px}
+    .muted{color:#6b776d}
+
+    /* Ergebniskarte etwas schmäler */
+    .result-card{max-width:760px;margin:0 auto}
+
+    .rows{padding:12px 18px}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #eef2ee}
+    .row:last-child{border-bottom:0}
+    .k{color:var(--muted)} .v{font-weight:700}
+
+    /* Bestellung */
+    .order-card{max-width:760px;margin:12px auto 0}
+    .order-body{padding:16px 18px}
+    .table{width:100%;border-collapse:collapse;border-spacing:0}
+    .table th,.table td{padding:10px 8px;border-bottom:1px dashed #e7eee4;text-align:left;vertical-align:top}
+    .table th{font-size:.85rem;color:#33503a;text-transform:uppercase;letter-spacing:.02em}
+    .sum{display:flex;justify-content:flex-end;gap:24px;margin-top:12px}
+    .sum .lbl{color:#33503a;font-weight:600}
+    .sum .val{min-width:160px;text-align:right;font-weight:800}
+
+    .frm{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}
+    .frm .col{display:flex;flex-direction:column;gap:12px}
+    .group{display:flex;flex-direction:column}
+    label{font-weight:600;font-size:.92rem;margin-bottom:.35rem;color:#1f2b1c}
+    input[type="text"], input[type="email"], input[type="tel"], textarea, select{
+      border:1.7px solid #d9e3d3;border-radius:10px;padding:10px 12px;font-size:.95rem;outline:none;transition:.2s;background:#fff;width:100%
+    }
+    input:focus, textarea:focus, select:focus{border-color:var(--brand-dark);box-shadow:0 0 0 4px var(--ring)}
+    textarea{min-height:104px;resize:vertical}
+    .checks{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+    .checks label{font-weight:500;display:flex;gap:8px;align-items:flex-start}
+    .checks input{margin-top:4px}
+
+    .radios{display:flex;flex-wrap:wrap;gap:8px}
+    .radio{border:1px solid #e0ebdc;border-radius:999px;padding:8px 12px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+    .radio input{accent-color:var(--brand)}
+
+    .btn{margin-top:6px;width:100%;background:var(--brand);color:#fff;border:none;border-radius:10px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .02s,background .15s}
+    .btn:hover,.btn:focus{background:var(--brand-dark);outline:none}
+    .btn:active{transform:translateY(1px)}
+
+    /* Footer = exakt wie Index */
+    .footer{margin-top:34px;background:var(--brand);color:#fff;text-align:center;padding:24px 12px;font-size:.95rem}
+
+    /* Chart (gleich wie Index) */
+    .chart-card{max-width:var(--chart-max-width);width:100%;margin:34px auto 0;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:0 0 8px;border:1px solid #e8efe3;overflow:hidden}
+    .chart-tune{transform:translateX(var(--chart-shift-x-desktop)) scale(var(--chart-zoom-desktop));transform-origin:top left}
+    .chart-inner{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+    .chart-inner iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+    .legend{display:flex;gap:28px;justify-content:center;padding:8px 8px 12px;color:#333;font-weight:600;font-size:.9rem}
+    .legend .line{width:28px;height:4px;border-radius:2px;display:inline-block}
+    .blue{background:#007bff}.red{background:#dc3545}.yellow{background:#ffc107}
+
+    .chart-open{display:none;margin:10px auto 12px;background:var(--brand);color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9999}
+    .modal[aria-hidden="false"]{display:flex}
+    .modal__panel{width:min(1000px,92vw);height:min(80vh,92vh);background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+    .modal__close{position:absolute;top:8px;right:10px;background:#fff;border:1px solid #e5e7eb;border-radius:999px;width:36px;height:36px;font-size:20px;line-height:34px;text-align:center;cursor:pointer}
+    .modal__body{position:absolute;inset:48px 12px 12px 12px}
+    .modal__body iframe{width:100%;height:100%;border:0}
+
+    /* Mobil */
+    @media (max-width:900px){
+      header{padding:24px 22px}
+      .hero{padding:2.4rem 1rem 2rem} /* etwas mehr Luft auch mobil */
+      .frm{grid-template-columns:1fr}
+      .chart-tune{transform:translateX(var(--chart-shift-x-mobile)) scale(var(--chart-zoom-mobile)); display:none !important}
+      .chart-open{display:block}
+      .modal__panel{width:70vw;height:40vh}
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (identisch zum Index) -->
+  <header>
+    <img src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" alt="Logo" class="logo" />
+  </header>
+
+  <!-- Titelbereich -->
+  <section class="hero" aria-labelledby="h1">
+    <h1 id="h1">Ergebnis Heizölpreis</h1>
+    <!-- (Hinweise für die Lieferung entfernt – Änderung 4) -->
+  </section>
+
+  <main class="wrap">
+    <div class="grid">
+      <!-- Ergebnis-Karte (schmäler) -->
+      <section class="card result-card" aria-labelledby="r1">
+        <div class="hdr">
+          <h2 id="r1">Daten</h2>
+          <div class="muted" id="datum"></div>
+        </div>
+        <div class="rows" id="summaryRows">
+          <!-- Wird per JS mit Werten befüllt -->
+          <!-- Zeigt KEIN area & KEINE Margen; nur Endpreis €/100 L + Summen -->
+        </div>
+      </section>
+
+      <!-- Bestellformular -->
+      <section class="card order-card" aria-labelledby="o1">
+        <div class="hdr">
+          <h2 id="o1">Bestellung</h2>
+          <div class="muted">unverbindliche Angaben prüfen</div>
+        </div>
+        <div class="order-body">
+          <div style="overflow:auto">
+            <table class="table" aria-describedby="posDesc">
+              <thead>
+                <tr>
+                  <th style="width:22%">Menge</th>
+                  <th>Beschreibung</th>
+                  <th style="width:22%">Einzelpreis</th>
+                  <th style="width:22%">Gesamtpreis</th>
+                </tr>
+              </thead>
+              <tbody id="posBody">
+                <!-- Wird per JS gefüllt -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sum"><div class="lbl">Zwischensumme</div><div class="val" id="sumNetto">–</div></div>
+          <div class="sum"><div class="lbl">zzgl. MwSt.</div><div class="val" id="sumMwst">–</div></div>
+          <div class="sum"><div class="lbl">Gesamt</div><div class="val" id="sumBrutto">–</div></div>
+
+          <p id="posDesc" class="muted" style="margin-top:8px">
+            Bitte prüfen Sie Ihre Angaben und füllen Sie das Formular aus, um die Bestellung abzuschließen.
+          </p>
+
+          <form id="orderForm" class="frm" novalidate>
+            <div class="col">
+              <div class="group">
+                <label for="zahlart">Zahlungsmethode</label>
+                <div class="radios" id="zahlart">
+                  <label class="radio"><input type="radio" name="zahlart" value="Barzahlung" checked> Barzahlung</label>
+                  <label class="radio"><input type="radio" name="zahlart" value="EC-Karte"> EC-Karte</label>
+                  <label class="radio"><input type="radio" name="zahlart" value="Vorabüberweisung"> Vorabüberweisung</label>
+                </div>
+              </div>
+
+              <div class="group">
+                <label for="lieferzeit">Lieferzeit</label>
+                <div class="radios" id="lieferzeit">
+                  <label class="radio"><input type="radio" name="lieferzeit" value="ca. 2-3 Wochen" checked> ca. 2–3 Wochen</label>
+                  <label class="radio"><input type="radio" name="lieferzeit" value="1-2 Werktage (Preis auf Anfrage, ca. +100 €)"> 1–2 Werktage (Preis auf Anfrage, ca. +100 €)</label>
+                </div>
+              </div>
+
+              <div class="group">
+                <label for="firma">Firma (optional)</label>
+                <input type="text" id="firma" name="firma" autocomplete="organization">
+              </div>
+
+              <div class="group">
+                <label for="addr">Adresse *</label>
+                <input type="text" id="addr" name="adresse" required autocomplete="address-line1">
+              </div>
+
+              <div class="group">
+                <label for="plz">Postleitzahl *</label>
+                <input type="text" id="plz" name="plz" required maxlength="5" inputmode="numeric" pattern="\d{5}" autocomplete="postal-code">
+              </div>
+
+              <div class="group">
+                <label for="city">Stadt *</label>
+                <input type="text" id="city" name="stadt" required autocomplete="address-level2">
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="group">
+                <label for="vor">Vorname *</label>
+                <input type="text" id="vor" name="vorname" required autocomplete="given-name">
+              </div>
+
+              <div class="group">
+                <label for="nach">Name *</label>
+                <input type="text" id="nach" name="nachname" required autocomplete="family-name">
+              </div>
+
+              <div class="group">
+                <label for="mail">E-Mail *</label>
+                <input type="email" id="mail" name="email" required autocomplete="email">
+              </div>
+
+              <div class="group">
+                <label for="tel">Telefon *</label>
+                <input type="tel" id="tel" name="telefon" required autocomplete="tel">
+              </div>
+
+              <div class="group">
+                <label for="note">Bemerkungen</label>
+                <textarea id="note" name="bemerkungen" placeholder="z. B. Zugang, Uhrzeit, Hinweise…"></textarea>
+              </div>
+
+              <div class="checks">
+                <label><input type="checkbox" name="agb" required> Ich akzeptiere die AGB *</label>
+                <label><input type="checkbox" name="newsletter"> Newsletter abonnieren</label>
+                <label><input type="checkbox" name="abo"> Ich möchte die Lieferpauschale sparen. Bitte informieren Sie mich unverbindlich über die Möglichkeiten des Heizöl-Abos!</label>
+              </div>
+
+              <!-- ▶ Änderung 2: Button-Text -->
+              <button class="btn" id="orderBtn" type="submit">Jetzt verbindlich bestellen</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Preisdiagramm (identisch zum Index) -->
+      <div class="chart-card">
+        <div class="chart-tune">
+          <div class="chart-inner">
+            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgDaArv9UgKthAI2xg0BfJXxqJ6yUCqQZzlbytuz4KAUEPXKAeyteb45S943v2a_Hq4E2XAvidKalW/pubchart?oid=1568395756&amp;format=interactive" frameborder="0" scrolling="no" seamless title="Preis-Chart"></iframe>
+          </div>
+        </div>
+        <button class="chart-open" type="button" id="openChartBtn" aria-haspopup="dialog" aria-controls="chartModal">Preisentwicklung Öl ansehen</button>
+        <div class="legend">
+          <span><i class="line blue"></i> 7 Tage</span>
+          <span><i class="line red"></i> 14 Tage</span>
+          <span><i class="line yellow"></i> 90 Tage</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer (identisch zum Index) -->
+  <footer class="footer">
+    <p>© 2025 Raiffeisenmarkt Wiesbach – Alle Rechte vorbehalten</p>
+  </footer>
+
+  <!-- Modal fürs Chart (wie Index) -->
+  <div class="modal" id="chartModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="chartTitle">
+    <div class="modal__panel">
+      <button class="modal__close" type="button" id="closeChartBtn" aria-label="Popup schließen">×</button>
+      <div class="modal__body">
+        <h2 id="chartTitle" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">Preis-Chart</h2>
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgDaArv9UgKthAI2xg0BfJXxqJ6yUCqQZzlbytuz4KAUEPXKAeyteb45S943v2a_Hq4E2XAvidKalW/pubchart?oid=1568395756&amp;format=interactive" title="Preis-Chart (Vollbild)"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Datum
+    document.getElementById('datum').textContent = new Date().toLocaleDateString('de-DE');
+
+    // Modal-Logik (wie Index)
+    const openChartBtn = document.getElementById('openChartBtn');
+    const chartModal   = document.getElementById('chartModal');
+    const closeChartBtn= document.getElementById('closeChartBtn');
+    function openModal(){ chartModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+    function closeModal(){ chartModal.setAttribute('aria-hidden','true');  document.body.style.overflow=''; }
+    if(openChartBtn)  openChartBtn.addEventListener('click', openModal);
+    if(closeChartBtn) closeChartBtn.addEventListener('click', closeModal);
+    if(chartModal) chartModal.addEventListener('click', (e)=>{ if(e.target===chartModal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+    // Daten aus n8n (Index) holen
+    const storeRaw = sessionStorage.getItem('oelForm');
+    if(!storeRaw){
+      document.getElementById('summaryRows').innerHTML = '<p>Keine Daten gefunden. Bitte zurück zur Startseite.</p>';
+    } else {
+      const store = JSON.parse(storeRaw);
+      const eingabe = store.eingabe || store.input || {};
+      const result  = store.berechnung || store.result || store || {};
+      const fmt     = result.formatted || {};
+      const komp    = result.komponentenPro100L || {};
+      const totals  = result.totals || {};
+
+      // Werte für Anzeige (nur Endpreis je 100 L + Summen, KEINE Marge, KEIN area)
+      const liefermenge = fmt.liefermenge || (eingabe.liefermenge?.toLocaleString('de-DE') + ' L') || '–';
+      const plz         = eingabe.plz || '';
+      const ablade      = (eingabe.abladestellen ?? '').toString() || '–';
+      const endpreis100 = fmt.endpreisPro100L || (typeof komp.endpreisPro100L==='number' ? komp.endpreisPro100L.toLocaleString('de-DE',{minimumFractionDigits:2})+' €' : '–');
+      const warenwert   = fmt.warenwertNetto || '–';
+      const lpAnz       = totals.lieferpauschaleAnzahl ?? 1;
+      const lpEinheit   = fmt.lieferpauschaleEinheit || '11,00 €';
+      const lpSumme     = fmt.lieferpauschale || '–';
+      const netto       = fmt.zwischensummeNetto || '–';
+      const mwst        = fmt.mwstBetrag || '–';
+      const brutto      = fmt.gesamtBrutto || '–';
+
+      // Ergebnis-Abschnitt rendern
+      document.getElementById('summaryRows').innerHTML = `
+        <div class="row" aria-label="PLZ"><div class="k">PLZ</div><div class="v">${plz || '—'}</div></div>
+        <div class="row" aria-label="Liefermenge"><div class="k">Liefermenge</div><div class="v">${liefermenge}</div></div>
+        <div class="row" aria-label="Abladestellen"><div class="k">Abladestellen</div><div class="v">${ablade}</div></div>
+        <div class="row" aria-label="Preis je 100 L"><div class="k">Preis (€/100 L)</div><div class="v">${endpreis100}</div></div>
+        <div class="row" aria-label="Warenwert netto"><div class="k">Warenwert netto</div><div class="v">${warenwert}</div></div>
+        <div class="row" aria-label="Lieferpauschale"><div class="k">Lieferpauschale</div><div class="v">${lpAnz} × ${lpEinheit} = ${lpSumme}</div></div>
+        <div class="row" aria-label="Zwischensumme netto"><div class="k">Zwischensumme netto</div><div class="v">${netto}</div></div>
+        <div class="row" aria-label="MwSt"><div class="k">zzgl. MwSt.</div><div class="v">${mwst}</div></div>
+        <div class="row" aria-label="Gesamt"><div class="k">Gesamt</div><div class="v">${brutto}</div></div>
+      `;
+
+      // Positionszeilen für Bestellung
+      const posBody = document.getElementById('posBody');
+
+      // ▶ Änderung 3: Beschreibung dynamisch bei Premium
+      const isPremium = Boolean(eingabe.premium || result.input?.premium);
+      const beschreibung = isPremium ? 'Heizöl Premium schwefelarm' : 'Heizöl EL schwefelarm · DIN 51603-1';
+
+      const mengeTxt   = liefermenge;
+      const ep100Txt   = endpreis100.replace(/\s€/,' €'); // robust
+      const warenwertTxt = warenwert;
+
+      posBody.innerHTML = `
+        <tr>
+          <td>${mengeTxt}</td>
+          <td>${beschreibung}</td>
+          <td>${ep100Txt} / 100 L</td>
+          <td>${warenwertTxt}</td>
+        </tr>
+        <tr>
+          <td>${lpAnz}</td>
+          <td>Gefahrgutzuschläge / Lieferpauschale</td>
+          <td>${lpEinheit}</td>
+          <td>${lpSumme}</td>
+        </tr>
+      `;
+
+      // Summen
+      document.getElementById('sumNetto').textContent = netto;
+      document.getElementById('sumMwst').textContent  = mwst;
+      document.getElementById('sumBrutto').textContent= brutto;
+
+      // PLZ vorfüllen
+      const plzInp = document.getElementById('plz');
+      if(plzInp && plz) plzInp.value = plz;
+    }
+
+    // Bestellung an n8n (TEST Webhook) senden – Funktionalität bleibt unverändert
+    const ORDER_URL = 'https://n8n.srv899952.hstgr.cloud/webhook-test/oelbestellung';
+    const orderForm = document.getElementById('orderForm');
+    const orderBtn  = document.getElementById('orderBtn');
+
+    orderForm?.addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      if(!orderForm.checkValidity()){
+        orderForm.reportValidity();
+        return;
+      }
+      const store = JSON.parse(sessionStorage.getItem('oelForm') || '{}');
+      const formData = new FormData(orderForm);
+      const kunde = Object.fromEntries(formData.entries());
+
+      // Booleans für Checkboxen:
+      kunde.agb = !!formData.get('agb');
+      kunde.newsletter = !!formData.get('newsletter');
+      kunde.abo = !!formData.get('abo');
+
+      // Positionen aus Tabelle (für n8n transparent)
+      const pos = [];
+      document.querySelectorAll('#posBody tr').forEach(tr=>{
+        const tds = tr.querySelectorAll('td');
+        if(tds.length===4){
+          pos.push({
+            menge: tds[0].textContent.trim(),
+            beschreibung: tds[1].textContent.trim(),
+            einzelpreis: tds[2].textContent.trim(),
+            gesamt: tds[3].textContent.trim(),
+          });
+        }
+      });
+
+      orderBtn.disabled = true; orderBtn.textContent = 'Sende…';
+      try{
+        const payload = {
+          eingabe: store.eingabe || store.input || {},
+          berechnung: store.berechnung || store.result || store || {},
+          positionen: pos,
+          kunde,
+          optionen: {
+            zahlart: formData.get('zahlart'),
+            lieferzeit: formData.get('lieferzeit'),
+          }
+        };
+        const res = await fetch(ORDER_URL, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const txt = await res.text();
+        if(!res.ok) throw new Error('HTTP '+res.status+' | '+txt.slice(0,200));
+        alert('Vielen Dank! Ihre Bestellung wurde übermittelt.');
+      } catch(err){
+        alert('Fehler beim Senden: '+ err.message);
+      } finally {
+        orderBtn.disabled = false; orderBtn.textContent = 'Jetzt verbindlich bestellen';
+      }
+    });
+  </script>
+</body>
+</html>
