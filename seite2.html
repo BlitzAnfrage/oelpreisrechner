@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preisübersicht – Heizöl</title>
+  <style>
+    :root{
+      --brand:#6EC054; --brand-2:#4c7f2d; --ink:#1f2b1c; --bg:#f7faf7; --card:#fff;
+      --muted:#66736a; --ring:rgba(110,192,84,.25); --shadow:0 12px 30px rgba(0,0,0,.08);
+      --chart-max-width:1000px; --chart-shift-x-desktop:0px; --chart-zoom-desktop:1;
+      --chart-shift-x-mobile:-12px; --chart-zoom-mobile:.85;
+    }
+    *{box-sizing:border-box}
+    html{font-size:15px;overflow-x:hidden}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--ink)}
+    header{background:var(--brand);padding:22px 18px;color:#fff;display:flex;align-items:center;justify-content:center}
+    .logo{height:40px}
+
+    .wrap{max-width:1040px;margin:0 auto;padding:18px}
+
+    .hero{background:#fff;border:1px solid #e8efe3;border-radius:14px;box-shadow:var(--shadow);padding:12px 16px;margin:16px auto}
+    .hero h1{margin:.2rem 0;color:#184b10;font-size:clamp(1.2rem,2.2vw,1.6rem)}
+    .hero p{margin:.25rem 0 .4rem;color:#2a2d29}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width:820px){.grid{grid-template-columns:1fr}}
+
+    .card{background:var(--card);border:1px solid #e8efe3;border-radius:14px;box-shadow:var(--shadow)}
+    .card .hdr{padding:14px 16px;border-bottom:1px solid #eef3ec;display:flex;align-items:center;justify-content:space-between}
+    .card .body{padding:12px 16px}
+    .badge{display:inline-flex;gap:6px;align-items:center;background:#e8f6e4;border:1px solid #cfeacc;color:#13470e;border-radius:999px;padding:4px 10px;font-weight:700;font-size:.78rem}
+
+    .rows .row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed #eef2ee}
+    .rows .row:last-child{border-bottom:0}
+    .k{color:var(--muted)} .v{font-weight:700}
+
+    .total{padding:14px 16px;background:#fbfffb;border-top:1px solid #eef3ec;border-bottom-left-radius:14px;border-bottom-right-radius:14px}
+    .total h2{margin:.1rem 0 .5rem;font-size:1.35rem}
+    .muted{color:#748277;font-size:.88rem}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#fff;color:#184b10;border:1.6px solid #cfeacc}
+    .btn:focus{outline:4px solid var(--ring)}
+
+    /* Chart-Karte wie auf der Startseite */
+    .chart-card{max-width:var(--chart-max-width);width:100%;margin:20px auto 0;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:0 0 8px;border:1px solid #e8efe3;overflow:hidden}
+    .chart-tune{transform:translateX(var(--chart-shift-x-desktop)) scale(var(--chart-zoom-desktop));transform-origin:top left}
+    .chart-inner{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+    .chart-inner iframe{position:absolute;inset:0;border:0;width:100%;height:100%}
+    .legend{display:flex;gap:28px;justify-content:center;padding:8px 8px 12px;color:#333;font-weight:600;font-size:.9rem}
+    .legend .line{width:28px;height:4px;border-radius:2px;display:inline-block}
+    .blue{background:#007bff}.red{background:#dc3545}.yellow{background:#ffc107}
+
+    @media (max-width:820px){
+      header{padding:18px 14px}
+      .hero{padding:10px 12px}
+      .chart-tune{transform:translateX(var(--chart-shift-x-mobile)) scale(var(--chart-zoom-mobile))}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo" src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" alt="Raiffeisen Logo" />
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <h1>Ihre individuelle Heizöl‑Preisübersicht</h1>
+      <p id="sub">Berechnet am <span id="datum">—</span></p>
+    </section>
+
+    <div class="grid">
+      <!-- Eingaben & Eckdaten -->
+      <div class="card" id="cardA">
+        <div class="hdr">
+          <strong>Eingaben</strong>
+          <span class="badge" id="premiumBadge" hidden>Premium aktiv</span>
+        </div>
+        <div class="body rows">
+          <div class="row"><div class="k">Gebiet</div><div class="v" id="area">—</div></div>
+          <div class="row"><div class="k">PLZ</div><div class="v" id="plz">—</div></div>
+          <div class="row"><div class="k">Liefermenge</div><div class="v" id="liefermenge">—</div></div>
+          <div class="row"><div class="k">Abladestellen</div><div class="v" id="ablade">—</div></div>
+        </div>
+      </div>
+
+      <!-- Komponenten je 100 L -->
+      <div class="card" id="cardB">
+        <div class="hdr"><strong>Preisbestandteile je 100&nbsp;L</strong><span id="currency">EUR</span></div>
+        <div class="body rows">
+          <div class="row"><div class="k">Tagespreis</div><div class="v" id="tagespreis">—</div></div>
+          <div class="row"><div class="k">Hauptmarge</div><div class="v" id="hauptMarge">—</div></div>
+          <div class="row"><div class="k">Zusatzmarge (Abladestellen)</div><div class="v" id="zusatzMarge">—</div></div>
+          <div class="row"><div class="k">Premiumaufschlag</div><div class="v" id="premiumMarge">—</div></div>
+          <div class="row"><div class="k">Summe Marge</div><div class="v" id="summeMarge">—</div></div>
+          <div class="row"><div class="k">Endpreis</div><div class="v" id="preis100">—</div></div>
+          <div class="row"><div class="k">Preis je Liter</div><div class="v" id="preisL">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <div class="card" style="margin-top:14px">
+      <div class="hdr"><strong>Summe & Steuern</strong></div>
+      <div class="body rows">
+        <div class="row"><div class="k">Warenwert netto</div><div class="v" id="warenwert">—</div></div>
+        <div class="row"><div class="k">Gefahrgutzuschläge / Lieferpauschale</div><div class="v" id="pauschale">—</div></div>
+        <div class="row"><div class="k">Zwischensumme netto</div><div class="v" id="netto">—</div></div>
+        <div class="row"><div class="k">zzgl. MwSt.</div><div class="v" id="mwst">—</div></div>
+      </div>
+      <div class="total">
+        <h2 id="brutto">Gesamtpreis: —</h2>
+        <div class="actions">
+          <button class="btn" id="btnPrint" type="button">PDF / Drucken</button>
+          <a class="btn secondary" href="./index.html">Neue Berechnung</a>
+        </div>
+        <p class="muted">Alle Angaben ohne Gewähr. Preis basiert auf Tagespreis + Margen je 100&nbsp;L.</p>
+      </div>
+    </div>
+
+    <!-- Chart wie auf Startseite -->
+    <div class="chart-card">
+      <div class="chart-tune">
+        <div class="chart-inner">
+          <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgDaArv9UgKthAI2xg0BfJXxqJ6yUCqQZzlbytuz4KAUEPXKAeyteb45S943v2a_Hq4E2XAvidKalW/pubchart?oid=1568395756&amp;format=interactive" title="Preis-Chart"></iframe>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="line blue"></i> 7 Tage</span>
+        <span><i class="line red"></i> 14 Tage</span>
+        <span><i class="line yellow"></i> 90 Tage</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Helper
+    const euro = (v)=>{
+      const n = Number(v); if(!isFinite(n)) return '—';
+      return n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+    }
+    const numf = (v)=>{
+      const n = Number(v); if(!isFinite(n)) return '—';
+      return n.toLocaleString('de-DE');
+    }
+
+    function fill(id, val){ const el = document.getElementById(id); if(el) el.textContent = val; }
+
+    // Daten holen (aus index.html via sessionStorage gesetzt)
+    let store = {};
+    try{ store = JSON.parse(sessionStorage.getItem('oelForm')||'{}'); }catch{}
+    const b = store?.berechnung || {};
+    const meta = b.meta||{}; const inp=b.input||{}; const k=b.komponentenPro100L||{}; const t=b.totals||{}; const f=b.formatted||{};
+
+    if(!Object.keys(b).length){
+      document.querySelector('.hero h1').textContent = 'Keine Daten gefunden';
+      document.getElementById('sub').innerHTML = 'Bitte starten Sie die Berechnung erneut.';
+    }
+
+    // Kopf
+    const dstr = meta.generatedAt ? new Date(meta.generatedAt).toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE');
+    fill('datum', dstr);
+    const badge = document.getElementById('premiumBadge');
+    if(inp.premium) badge.hidden = false; else badge.hidden = true;
+
+    // Eingaben
+    fill('area', inp.area||'—');
+    fill('plz', inp.plz||'—');
+    fill('liefermenge', f.liefermenge || (numf(inp.liefermengeL)+' L'));
+    fill('ablade', numf(inp.abladestellen||1));
+
+    // je 100 L
+    fill('tagespreis', f.tagespreis || euro(k.tagespreis));
+    fill('hauptMarge', f.hauptMarge || euro(k.hauptMarge));
+    fill('zusatzMarge', f.zusatzMarge || euro(k.zusatzMarge));
+    fill('premiumMarge', f.premiumMarge || euro(k.premiumMarge));
+    fill('summeMarge', f.summeMarge || euro(k.summeMarge));
+    fill('preis100', f.endpreisPro100L || euro(k.endpreisPro100L));
+    fill('preisL', f.preisProL || euro(k.preisProL));
+
+    // Summen
+    const lpText = (t.lieferpauschaleEinheit!=null && t.lieferpauschaleAnzahl!=null)
+      ? `${t.lieferpauschaleAnzahl} × ${euro(t.lieferpauschaleEinheit)} = ${euro(t.lieferpauschale)}`
+      : (f.lieferpauschale || euro(t.lieferpauschale));
+
+    fill('warenwert', f.warenwertNetto || euro(t.warenwertNetto));
+    fill('pauschale', lpText);
+    fill('netto', f.zwischensummeNetto || euro(t.zwischensummeNetto));
+    const mwstLabel = (t.mwstSatz!=null? t.mwstSatz: 19);
+    fill('mwst', (f.mwstBetrag || euro(t.mwstBetrag)) + ` (${mwstLabel}%)`);
+    fill('brutto', `Gesamtpreis: ${f.gesamtBrutto || euro(t.gesamtBrutto)}`);
+
+    // Aktionen
+    document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
+  </script>
+</body>
+</html>
