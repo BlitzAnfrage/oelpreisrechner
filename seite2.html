@@ -478,7 +478,7 @@
 
       btnOrder.disabled = true; const oldTxt = btnOrder.textContent; btnOrder.textContent = 'Senden…';
       try{
-        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook-test/oelrechner-bestellung',{
+        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook/oelrechner-bestellung',{
           method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
         });
         const text = await res.text();
