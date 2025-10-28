@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Preisübersicht – Heizöl</title>
+  <!-- Favicon & Theme (wie Index) -->
+  <link rel="icon" href="https://onecdn.io/media/96d496c9-3b9e-451e-ab59-264290e9b0cf/full" sizes="any" />
+  <meta name="theme-color" content="#6EC054" />
   <style>
     :root{
       --brand:#6EC054; --brand-2:#4c7f2d; --ink:#1f2b1c; --bg:#f7faf7; --card:#fff;
@@ -17,35 +20,23 @@
 
     .wrap{max-width:1040px;margin:0 auto;padding:18px}
 
-    /* Hero */
+    /* Hero (ohne Bild, nur Hinweise wie auf Index) */
     .hero{background:#fff;border:1px solid #e8efe3;border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;margin:16px auto}
     .hero h1{margin:.2rem 0;color:#184b10;font-size:clamp(1.2rem,2.2vw,1.6rem)}
     .hero p{margin:.25rem 0 .4rem;color:#2a2d29}
-
-    /* Bild + Overlay */
-    .hero-media{max-width:1000px;margin:1rem auto 0;position:relative}
-    .hero-img{width:100%;height:auto;border-radius:12px;box-shadow:var(--shadow);display:block}
-    .hero-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;pointer-events:none;background:linear-gradient(to top, rgba(0,0,0,.35) 0 35%, rgba(0,0,0,0) 60%)}
-    .overlay-box{pointer-events:auto;background:rgba(255,255,255,.92);border:1px solid #e8efe3;border-radius:12px;box-shadow:var(--shadow);padding:12px 14px;max-width:min(92%,760px)}
+    .hero-notes{margin-top:.5rem}
     .overlay-lead{margin:0 0 6px;color:#184b10;font-weight:800}
     .overlay-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
     .overlay-list li{display:inline-flex;align-items:center;gap:6px;background:#fbfdf9;border:1px solid #e8efe3;border-radius:999px;padding:6px 10px;font-weight:700;color:#184b10}
     .overlay-list li::before{content:'✓';font-weight:900}
-    /* Mobil: Overlay unter Bild */
-    .hero-below{display:none;background:rgba(255,255,255,.96);border:1px solid #e8efe3;border-radius:12px;box-shadow:var(--shadow);padding:12px 14px;margin-top:10px}
-    @media (max-width:820px){
-      .hero-overlay{display:none}
-      .hero-below{display:block}
-    }
 
-    /* Modernes Preis-Widget 2025 */
+    /* Preis-Widget */
     .price-hero{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:stretch;margin:16px 0}
     .price-hero .card{background:linear-gradient(180deg,#ffffff 0%, #fbfffb 100%);border:1px solid #e8efe3;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
     .price-hero .main{padding:18px 18px}
     .title-over-price{margin:0 0 8px;color:#184b10;font-size:clamp(1.3rem,2.4vw,1.6rem)}
     .sup{display:flex;gap:8px;align-items:center;margin-bottom:6px}
     .sup .badge{display:inline-flex;gap:6px;align-items:center;background:#e8f6e4;border:1px solid #cfeacc;color:#13470e;border-radius:999px;padding:4px 10px;font-weight:800;font-size:.8rem}
-    /* ▼ Größerer Brutto-Gesamtpreis */
     .price{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:900;margin:.2rem 0;color:#0e3d08}
     .price small{font-weight:700;color:#2e4f25;font-size:.9rem}
     .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
@@ -77,7 +68,7 @@
     .btn.secondary{background:#fff;color:#184b10;border:1.6px solid #cfeacc}
     .btn:focus{outline:4px solid var(--ring)}
 
-    /* Newsletter-Karte modern */
+    /* Newsletter-Karte */
     .newsletter{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;background:#fbfdf9;border:1px solid #e8efe3;border-radius:12px;padding:12px; margin:16px 0}
     .newsletter img{width:100%;height:auto;border-radius:10px;display:block}
     .newsletter .title{font-weight:800;margin:0;color:#184b10}
@@ -109,9 +100,12 @@
     .footer{margin-top:34px;background:var(--brand);color:#fff;text-align:center;padding:24px 12px;font-size:.95rem}
     .footer a{color:#fff;text-decoration:underline}
 
-    /* Tweaks: Bestell-Header grün */
+    /* Tweaks */
     .order-card .hdr{background:var(--brand);color:#fff;border-radius:12px 12px 0 0;border-bottom:none}
     .order-card .hdr strong{color:#fff}
+
+    /* Robustness for hidden badge */
+    #premiumBadge[hidden]{display:none !important}
   </style>
 </head>
 <body>
@@ -121,31 +115,18 @@
 
   <div class="wrap">
     <section class="hero">
-      <div class="hero-media">
-        <img class="hero-img" src="https://onecdn.io/media/d8d8e53c-4ca6-4bf6-8e19-d5ea33bdf24d/full" alt="Heizöl-Versorgung – Symbolbild" loading="lazy" />
-        <div class="hero-overlay" aria-hidden="false">
-          <div class="overlay-box">
-            <p class="overlay-lead">Nach Ihrer Bestellung rufen wir Sie innerhalb von 1–2 Werktagen an und vereinbaren einen individuellen Liefertermin.</p>
-            <ul class="overlay-list">
-              <li>Individuelle Terminvereinbarung</li>
-              <li>Tankwagengröße inkl. kleiner TKW</li>
-              <li>Schlauchlänge bis 40&nbsp;m</li>
-            </ul>
-          </div>
-        </div>
-        <!-- Mobil-Version der Hinweise: unter dem Bild -->
-        <div class="hero-below">
-          <p class="overlay-lead">Nach Ihrer Bestellung rufen wir Sie innerhalb von 1–2 Werktagen an und vereinbaren einen individuellen Liefertermin.</p>
-          <ul class="overlay-list">
-            <li>Individuelle Terminvereinbarung</li>
-            <li>Tankwagengröße inkl. kleiner TKW</li>
-            <li>Schlauchlänge bis 40&nbsp;m</li>
-          </ul>
-        </div>
+      <h1>Preisübersicht & Bestellung</h1>
+      <div class="hero-notes">
+        <p class="overlay-lead">Nach Ihrer Bestellung rufen wir Sie innerhalb von 1–2 Werktagen an und vereinbaren einen individuellen Liefertermin.</p>
+        <ul class="overlay-list" aria-label="Leistungsmerkmale">
+          <li>Individuelle Terminvereinbarung</li>
+          <li>Tankwagengröße inkl. kleiner TKW</li>
+          <li>Schlauchlänge bis 40&nbsp;m</li>
+        </ul>
       </div>
     </section>
 
-    <!-- 2025 Preis-Widget -->
+    <!-- Preis-Widget -->
     <section class="price-hero" aria-label="Preisübersicht">
       <div class="card main" aria-live="polite">
         <h1 class="title-over-price">Ergebnis Heizölpreis</h1>
@@ -155,11 +136,12 @@
         </div>
         <div class="price" id="priceBig">—</div>
         <div class="meta" role="list">
-          <div class="kv" role="listitem"><span class="k">Preis je 100 L</span><span class="v" id="preis100">—</span></div>
-          <div class="kv" role="listitem"><span class="k">Preis je Liter</span><span class="v" id="preisL">—</span></div>
-          <div class="kv" role="listitem"><span class="k">Liefermenge</span><span class="v" id="liefermenge">—</span></div>
+          <div class="kv" role="listitem"><span class="k">Gesamtpreis netto</span><span class="v" id="priceNetMain">—</span></div>
+          <div class="kv" role="listitem"><span class="k">Preis je 100&nbsp;L (netto)</span><span class="v" id="preis100Net">—</span></div>
+          <div class="kv" role="listitem"><span class="k">Preis je 100&nbsp;L (brutto)</span><span class="v" id="preis100Brutto">—</span></div>
         </div>
         <p class="hint" id="expressHint" style="display:none">inkl. Expresszuschlag</p>
+        <p class="hint" id="invoiceHint" style="display:none">inkl. Aufpreis Zahlung auf Rechnung</p>
       </div>
       <aside class="card aside">
         <div class="rows">
@@ -168,6 +150,7 @@
           <div class="row"><div class="k">Warenwert netto</div><div class="v" id="warenwert">—</div></div>
           <div class="row"><div class="k">Lieferpauschale</div><div class="v" id="pauschale">—</div></div>
           <div class="row"><div class="k">Zwischensumme netto</div><div class="v" id="netto">—</div></div>
+          <div class="row" id="invoiceRow" style="display:none"><div class="k">Aufpreis Rechnung</div><div class="v" id="invoice">—</div></div>
           <div class="row" id="expressRow" style="display:none"><div class="k">Expresszuschlag</div><div class="v" id="express">—</div></div>
           <div class="row"><div class="k">MwSt.</div><div class="v" id="mwst">—</div></div>
         </div>
@@ -189,6 +172,7 @@
               <label class="choice"><input type="radio" name="payment" value="Barzahlung" required> Barzahlung</label>
               <label class="choice"><input type="radio" name="payment" value="EC-Karte"> EC‑Karte</label>
               <label class="choice"><input type="radio" name="payment" value="Vorabüberweisung"> Vorabüberweisung</label>
+              <label class="choice"><input type="radio" name="payment" value="Rechnung"> Rechnung <small>(+0,02 € / L)</small></label>
             </div>
           </section>
 
@@ -243,7 +227,7 @@
               </div>
             </div>
 
-            <!-- Newsletter modern -->
+            <!-- Newsletter -->
             <div class="newsletter" role="group" aria-labelledby="nlTitle">
               <img src="https://onecdn.io/media/09a82413-99f6-4343-86df-ab9feea45751/full" alt="Newsletter Mockup" loading="lazy" />
               <div>
@@ -278,9 +262,9 @@
   <footer class="footer">
     <p>© 2025 Raiffeisenmarkt Wiesbach – Alle Rechte vorbehalten</p>
     <p>
-      <a href="https://raiffeisenmarkt-wiesbach.onepage.me/home" target="_blank" rel="noopener">Impressum</a>
+      <a href="https://raiffeisenmarkt-wiesbach.onepage.me/impressum" target="_blank" rel="noopener">Impressum</a>
       ·
-      <a href="https://raiffeisenmarkt-wiesbach.onepage.me/home" target="_blank" rel="noopener">Datenschutz</a>
+      <a href="https://raiffeisenmarkt-wiesbach.onepage.me/datenschutzerklarung" target="_blank" rel="noopener">Datenschutz</a>
     </p>
   </footer>
 
@@ -290,7 +274,18 @@
     function fill(id, val){ const el = document.getElementById(id); if(el) el.textContent = val; }
 
     let store = {}; try{ store = JSON.parse(sessionStorage.getItem('oelForm')||'{}'); }catch{}
-    const b = store?.berechnung || {}; const meta = b.meta||{}; const inp=b.input||{}; const k=b.komponentenPro100L||{}; const t=b.totals||{}; const f=b.formatted||{};
+    const b = store?.berechnung || {}; 
+    const meta = b.meta||{}; 
+    const inp0 = b.input || store?.eingabe || {}; // robustes Fallback
+    const inp = {
+      plz: inp0.plz || '',
+      liefermengeL: Number(inp0.liefermengeL ?? inp0.liefermenge ?? 0),
+      abladestellen: Number(inp0.abladestellen ?? 1),
+      premium: Boolean(inp0.premium)
+    };
+    const k = b.komponentenPro100L||{}; 
+    const t = b.totals||{}; 
+    const f = b.formatted||{};
 
     if(!Object.keys(b).length){
       const heroTitle = document.querySelector('.price-hero .title-over-price') || document.querySelector('.hero h1');
@@ -298,20 +293,16 @@
     }
 
     const dstr = meta.generatedAt ? new Date(meta.generatedAt).toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE');
-    fill('datum', dstr); // optional, wird nur gesetzt, falls vorhanden
     const badge = document.getElementById('premiumBadge');
     if(badge) badge.hidden = !inp.premium;
 
     fill('plz', inp.plz||'—');
-    fill('liefermenge', f.liefermenge || (numf(inp.liefermengeL)+' L'));
     fill('ablade', numf(inp.abladestellen||1));
 
-    // Preis je 100 L & je Liter
-    const price100 = Number(k.endpreisPro100L ?? (f.endpreisPro100L ? Number(String(f.endpreisPro100L).replace(/[^0-9,.-]/g,'').replace(',','.')): NaN));
-    fill('preis100', f.endpreisPro100L || euro(price100));
-    const priceL = isFinite(price100) ? (price100/100) : NaN;
-    fill('preisL', isFinite(priceL) ? priceL.toLocaleString('de-DE',{style:'currency',currency:'EUR'})+' / L' : '—');
+    // Preis je 100 L (netto) Basis
+    const price100Base = Number(k.endpreisPro100L ?? (f.endpreisPro100L ? Number(String(f.endpreisPro100L).replace(/[^0-9,.-]/g,'').replace(',','.')): NaN));
 
+    // Detailwerte (Aside)
     const lpText = (t.lieferpauschaleEinheit!=null && t.lieferpauschaleAnzahl!=null)
       ? `${t.lieferpauschaleAnzahl} × ${euro(t.lieferpauschaleEinheit)} = ${euro(t.lieferpauschale)}`
       : (f.lieferpauschale || euro(t.lieferpauschale));
@@ -333,48 +324,112 @@
     const priceBigEl = document.getElementById('priceBig');
     priceBigEl.textContent = (f.gesamtBrutto || euro(baseBrutto));
 
+    // Netto-Gesamt (für die kompakte Meta oben)
+    const priceNetMainEl = document.getElementById('priceNetMain');
+    priceNetMainEl.textContent = (f.zwischensummeNetto || euro(t.zwischensummeNetto));
+
+    // 100L (netto/brutto) anfänglich
+    const preis100NetEl = document.getElementById('preis100Net');
+    const preis100BruttoEl = document.getElementById('preis100Brutto');
+    const price100GrossBase = isFinite(price100Base) ? price100Base*(1+MWST_RATE) : NaN;
+    preis100NetEl.textContent = isFinite(price100Base) ? euro(price100Base) : '—';
+    preis100BruttoEl.textContent = isFinite(price100GrossBase) ? euro(price100GrossBase) : '—';
+
     // Print Button
     document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
 
     // PLZ in Bestellformular vorbelegen
     const zipEl = document.getElementById('zip'); if(zipEl && inp.plz) zipEl.value = inp.plz;
 
-    // Express-Logik: Zuschlag NETTO 100 €, MwSt. wird korrekt erhöht, Brutto steigt um 100 € + 19 %
-    const EXPRESS_SURCHARGE = 100; // netto
+    // Zuschläge
+    const EXPRESS_SURCHARGE = 100; // netto, pauschal
+    const INVOICE_SURCHARGE_PER_L = 0.02; // netto pro Liter
+
     const expressRow = document.getElementById('expressRow');
     const expressVal = document.getElementById('express');
     const expressHint = document.getElementById('expressHint');
 
+    const invoiceRow = document.getElementById('invoiceRow');
+    const invoiceVal = document.getElementById('invoice');
+    const invoiceHint = document.getElementById('invoiceHint');
+
     function isExpressSelected(){
-      const val = document.querySelector('input[name="delivery"]:checked')?.value || '';
+      const val = document.querySelector('input[name=\"delivery\"]:checked')?.value || '';
       return /1-2\s*Werktage|Express/i.test(val);
     }
-    function updateExpressUI(){
+    function isInvoiceSelected(){
+      const val = document.querySelector('input[name=\"payment\"]:checked')?.value || '';
+      return /Rechnung/i.test(val);
+    }
+
+    function recalcTotals(){
+      let surchargesNet = 0;
+
+      // Express
       if(isExpressSelected()){
-        // Express-Zeile (netto)
         expressRow.style.display = 'flex';
         expressVal.textContent = euro(EXPRESS_SURCHARGE);
         expressHint.style.display = 'block';
-        // MwSt. korrekt anheben
-        const mwstNeu = mwstBaseNum + EXPRESS_SURCHARGE * MWST_RATE;
-        mwstEl.textContent = euro(mwstNeu) + ` (${MWST_SATZ}%)`;
-        // Brutto korrekt: Basis + Zuschlag + MwSt auf Zuschlag
-        priceBigEl.textContent = euro(baseBrutto + EXPRESS_SURCHARGE * (1 + MWST_RATE));
+        surchargesNet += EXPRESS_SURCHARGE;
       } else {
         expressRow.style.display = 'none';
         expressHint.style.display = 'none';
-        mwstEl.textContent = mwstOriginal;
-        priceBigEl.textContent = (f.gesamtBrutto || euro(baseBrutto));
       }
-    }
-    document.querySelectorAll('input[name="delivery"]').forEach(r=> r.addEventListener('change', updateExpressUI));
-    updateExpressUI();
 
-    // Bestellung absenden (unverändert, nur Zusatzinfo zum Expresszuschlag)
+      // Rechnung
+      const invoiceNet = isInvoiceSelected() ? (inp.liefermengeL * INVOICE_SURCHARGE_PER_L) : 0;
+      if(invoiceNet > 0){
+        invoiceRow.style.display = 'flex';
+        invoiceVal.textContent = euro(invoiceNet);
+        invoiceHint.style.display = 'block';
+      } else {
+        invoiceRow.style.display = 'none';
+        invoiceHint.style.display = 'none';
+      }
+      surchargesNet += invoiceNet;
+
+      // MwSt anpassen
+      const mwstNeu = mwstBaseNum + surchargesNet * MWST_RATE;
+      mwstEl.textContent = euro(mwstNeu) + ` (${MWST_SATZ}%)`;
+
+      // Brutto anpassen
+      const bruttoNeu = baseBrutto + surchargesNet * (1 + MWST_RATE);
+      priceBigEl.textContent = euro(bruttoNeu);
+
+      // Netto-Gesamt (oben kompakt) anpassen
+      const nettoBase = Number(t.zwischensummeNetto || 0);
+      priceNetMainEl.textContent = euro(nettoBase + surchargesNet);
+
+      // 100L-Preise anpassen (Rechnung +0,02€/L => +2€/100L (netto))
+      const addPer100L = isInvoiceSelected() ? 2 : 0; // netto
+      const net100 = isFinite(price100Base) ? price100Base + addPer100L : NaN;
+      const brutto100 = isFinite(net100) ? net100 * (1 + MWST_RATE) : NaN;
+      preis100NetEl.textContent = isFinite(net100) ? euro(net100) : '—';
+      preis100BruttoEl.textContent = isFinite(brutto100) ? euro(brutto100) : '—';
+    }
+
+    document.querySelectorAll('input[name=\"delivery\"]').forEach(r=> r.addEventListener('change', recalcTotals));
+    document.querySelectorAll('input[name=\"payment\"]').forEach(r=> r.addEventListener('change', recalcTotals));
+    recalcTotals();
+
+    // Bestellung absenden — sendet ALLE Daten vom Index + Berechnung + Zuschläge
     const btnOrder = document.getElementById('btnOrder');
     btnOrder.addEventListener('click', async ()=>{
       const form = document.getElementById('orderForm');
       if(!form.reportValidity()) return;
+
+      const invoiceNet = isInvoiceSelected() ? (inp.liefermengeL * INVOICE_SURCHARGE_PER_L) : 0;
+      const expressNet = isExpressSelected() ? EXPRESS_SURCHARGE : 0;
+
+      // Recalc snapshot für Server (optional, Server bleibt Quelle der Wahrheit)
+      const nettoBase = Number(t.zwischensummeNetto || 0);
+      const surchargesNet = invoiceNet + expressNet;
+      const mwstNeu = Number(t.mwstBetrag||0) + surchargesNet * MWST_RATE;
+      const bruttoNeu = Number(t.gesamtBrutto||0) + surchargesNet * (1 + MWST_RATE);
+      const addPer100L = isInvoiceSelected() ? 2 : 0; // netto
+      const net100 = isFinite(Number(price100Base)) ? Number(price100Base) + addPer100L : null;
+      const brutto100 = net100!=null ? net100 * (1 + MWST_RATE) : null;
+
       const payload = {
         order:{
           payment: form.elements['payment']?.value || '',
@@ -390,17 +445,33 @@
           bemerkungen: document.getElementById('note').value.trim(),
           agb: document.getElementById('agb').checked,
           newsletter: document.getElementById('nl').checked,
-          abo_interesse: document.getElementById('abo').checked,
-          expressZuschlagClient: isExpressSelected()? EXPRESS_SURCHARGE : 0
+          abo_interesse: document.getElementById('abo').checked
         },
-        context:{
-          plz: inp.plz,
-          liefermengeL: inp.liefermengeL,
-          abladestellen: inp.abladestellen,
-          premium: inp.premium,
-          endpreisPro100L: k.endpreisPro100L ?? null,
+        // Alles Relevante aus Seite 1 (Index) & Berechnung
+        fromIndex:{
+          eingabe: store?.eingabe ?? null,
+          berechnung: store?.berechnung ?? null,
+          timestamp: store?.timestamp ?? null
+        },
+        // Zusätzlich nochmal flach (falls fromIndex verschachtelt ist)
+        calc:{
+          meta: meta,
+          input: b.input || inp0 || {},
+          komponentenPro100L: k,
           totals: t,
           formatted: f
+        },
+        // Client-Zuschläge & Snapshot der resultierenden Summen
+        clientAdjustments:{
+          invoicePerL: INVOICE_SURCHARGE_PER_L,
+          invoiceNet,
+          expressNet,
+          surchargesNet,
+          net100AfterAdj: net100,
+          gross100AfterAdj: brutto100,
+          nettoGesamtAfterAdj: nettoBase + surchargesNet,
+          mwstAfterAdj: mwstNeu,
+          bruttoGesamtAfterAdj: bruttoNeu
         },
         meta:{ page:'seite2', submittedAt: new Date().toISOString() }
       };
