@@ -109,6 +109,34 @@
     .confirm td{padding:6px;border-bottom:1px dashed #e9efe7;vertical-align:top}
     .confirm .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
     .confirm .btn{border-radius:10px}
+
+    /* === Print nur das Bestätigungs-Panel === */
+    @media print {
+      /* Standard: alles ausblenden */
+      body.print-only-confirm * {
+        visibility: hidden !important;
+      }
+      /* Nur das Panel sichtbar + sauber positioniert */
+      body.print-only-confirm #confirm[aria-hidden="false"] .panel,
+      body.print-only-confirm #confirm[aria-hidden="false"] .panel * {
+        visibility: visible !important;
+      }
+      body.print-only-confirm #confirm[aria-hidden="false"] .panel {
+        position: absolute !important;
+        top: 0; left: 0; right: 0;
+        margin: 0 auto;
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+      }
+      /* Overlay-Hintergrund im Druck nicht zeigen */
+      body.print-only-confirm #confirm[aria-hidden="false"] {
+        background: transparent !important;
+      }
+
+      @page { size: A4; margin: 12mm; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
   </style>
 </head>
 <body>
@@ -391,7 +419,13 @@
     function openConfirm(){ confirmEl?.setAttribute('aria-hidden','false'); }
     function closeConfirm(){ confirmEl?.setAttribute('aria-hidden','true'); }
     document.getElementById('btnCloseConfirm').addEventListener('click', closeConfirm);
-    document.getElementById('btnPrintConfirm').addEventListener('click', ()=> window.print());
+
+    // Print nur Modal-Panel
+    document.getElementById('btnPrintConfirm').addEventListener('click', ()=>{
+      document.body.classList.add('print-only-confirm');
+      window.print();
+      setTimeout(()=> document.body.classList.remove('print-only-confirm'), 1000);
+    });
 
     // Bestellung absenden
     const btnOrder = document.getElementById('btnOrder');
@@ -436,10 +470,8 @@
         const text = await res.text();
         if(!res.ok) throw new Error('HTTP '+res.status+' | '+text.slice(0,200));
 
-        // Erfolgs-Toast
         showToast('Bestellung erfolgreich übermittelt.');
 
-        // Modal mit wichtigsten Daten füllen
         fill('cName', (payload.order.firma? payload.order.firma+' – ' : '') + payload.order.vorname + ' ' + payload.order.name);
         const mailLink = `<a href="mailto:${payload.order.email}">${payload.order.email}</a>`;
         const phoneLink = `<a href="tel:${payload.order.telefon.replace(/\s+/g,'')}">${payload.order.telefon}</a>`;
@@ -455,7 +487,7 @@
         openConfirm();
       }catch(err){
         showToast('Fehler beim Senden: '+err.message, true);
-        if(!toast) alert('Fehler beim Senden: '+err.message); // Fallback
+        if(!toast) alert('Fehler beim Senden: '+err.message);
       }finally{
         btnOrder.disabled = false; btnOrder.textContent = oldTxt;
       }
