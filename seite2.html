@@ -112,11 +112,9 @@
 
     /* === Print nur das Bestätigungs-Panel === */
     @media print {
-      /* Standard: alles ausblenden */
       body.print-only-confirm * {
         visibility: hidden !important;
       }
-      /* Nur das Panel sichtbar + sauber positioniert */
       body.print-only-confirm #confirm[aria-hidden="false"] .panel,
       body.print-only-confirm #confirm[aria-hidden="false"] .panel * {
         visibility: visible !important;
@@ -129,7 +127,6 @@
         border: none !important;
         max-width: 100% !important;
       }
-      /* Overlay-Hintergrund im Druck nicht zeigen */
       body.print-only-confirm #confirm[aria-hidden="false"] {
         background: transparent !important;
       }
@@ -187,6 +184,7 @@
         <div class="actions" style="margin-top:12px">
           <button class="btn" id="btnPrint" type="button">PDF / Drucken</button>
           <a class="btn secondary" href="./index.html">Neue Berechnung</a>
+          <button class="btn secondary" type="button">Exklusiv: verkürzte Lieferzeit</button>
         </div>
         <p class="hint">Alle Angaben ohne Gewähr und auf Anfrage.</p>
       </aside>
@@ -254,6 +252,19 @@
                   <label for="note">Bemerkungen</label>
                   <textarea id="note" name="bemerkungen" placeholder="z. B. Tank schwer zugänglich / mehr als 40 m Schlauch, …"></textarea>
                 </div>
+              </div>
+            </div>
+
+            <!-- Kontaktfeld bei mehreren Abladestellen (wird per JS ein-/ausgeblendet) -->
+            <div id="multiDropContact" class="fieldset" style="margin-top:12px; display:none;">
+              <p class="legend-title">Rückruf zu mehreren Abladestellen</p>
+              <div class="checkline">
+                <input id="contactMultiDrop" type="checkbox">
+                <label for="contactMultiDrop">Bitte kontaktieren Sie mich wegen der mehreren Abladestellen.</label>
+              </div>
+              <div style="margin-top:8px;">
+                <label for="contactTime">Bevorzugte Rückrufzeit</label>
+                <input id="contactTime" name="kontaktzeit" type="text" placeholder="z. B. werktags 9–12 Uhr">
               </div>
             </div>
 
@@ -351,6 +362,12 @@
     const badge = document.getElementById('premiumBadge'); if(badge) badge.hidden = !inp.premium;
 
     fill('plz', inp.plz||'—'); fill('ablade', numf(inp.abladestellen||1));
+
+    // Kontaktfeld für mehrere Abladestellen anzeigen, wenn mehr als 1 gewählt wurde
+    const multiDropContact = document.getElementById('multiDropContact');
+    if (multiDropContact && (inp.abladestellen || 1) > 1) {
+      multiDropContact.style.display = 'block';
+    }
 
     const price100Base = Number(k.endpreisPro100L ?? (f.endpreisPro100L ? Number(String(f.endpreisPro100L).replace(/[^0-9,.-]/g,'').replace(',','.')): NaN));
 
@@ -456,7 +473,9 @@
           bemerkungen: document.getElementById('note').value.trim(),
           agb: document.getElementById('agb').checked,
           newsletter: document.getElementById('nl').checked,
-          abo_interesse: document.getElementById('abo').checked
+          abo_interesse: document.getElementById('abo').checked,
+          kontakt_mehrere_abladestellen: document.getElementById('contactMultiDrop')?.checked || false,
+          kontaktzeit: document.getElementById('contactTime')?.value.trim() || ''
         },
         fromIndex:{ eingabe: store?.eingabe ?? null, berechnung: store?.berechnung ?? null, timestamp: store?.timestamp ?? null },
         calc:{ meta: meta, input: b.input || inp0 || {}, komponentenPro100L: k, totals: t, formatted: f },
