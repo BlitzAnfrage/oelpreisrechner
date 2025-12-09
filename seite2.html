@@ -33,7 +33,7 @@
     .price-hero .card{background:linear-gradient(180deg,#ffffff 0%, #fbfffb 100%);border:1px solid #e8efe3;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
     .price-hero .main{padding:18px 18px}
     .title-over-price{margin:0 0 8px;color:#184b10;font-size:clamp(1.3rem,2.4vw,1.6rem)}
-    .sup{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+    .sup{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
     .sup .badge{display:inline-flex;gap:6px;align-items:center;background:#e8f6e4;border:1px solid #cfeacc;color:#13470e;border-radius:999px;padding:4px 10px;font-weight:800;font-size:.8rem}
     .price{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:900;margin:.2rem 0;color:#0e3d08}
     .price small{font-weight:700;color:#2e4f25;font-size:.9rem}
@@ -137,6 +137,21 @@
       @page { size: A4; margin: 12mm; }
       body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
+
+    /* Zusätzliche Mobile-Optimierung */
+    @media (max-width:600px){
+      header{padding:16px 12px}
+      .wrap{padding:12px}
+      .hero{padding:12px}
+      .card .hdr{padding:12px 14px}
+      .card .body{padding:12px 14px}
+      .actions{flex-direction:column;width:100%}
+      .actions .btn{width:100%;text-align:center}
+      .aside{padding:14px}
+      .row{flex-direction:column;align-items:flex-start}
+      .confirm .grid2{grid-template-columns:1fr}
+      .newsletter{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
@@ -201,7 +216,7 @@
             <p class="legend-title">Zahlungsmethode</p>
             <div class="choices">
               <label class="choice"><input type="radio" name="payment" value="Barzahlung" required> Barzahlung</label>
-              <label class="choice"><input type="radio" name="payment" value="EC-Karte"> EC‑Karte</label>
+              <label class="choice"><input type="radio" name="payment" value="EC-Karte"> EC-Karte</label>
               <label class="choice"><input type="radio" name="payment" value="Vorabüberweisung"> Vorabüberweisung</label>
               <label class="choice"><input type="radio" name="payment" value="Rechnung"> Rechnung <small>(+0,02 € / L)</small></label>
             </div>
@@ -243,13 +258,34 @@
                 <input id="city" name="stadt" type="text" required>
               </div>
               <div>
-                <label for="mail">E‑Mailadresse *</label>
+                <label for="mail">E-Mailadresse *</label>
                 <input id="mail" name="email" type="email" required>
               </div>
               <div>
                 <label for="phone">Telefonnummer *</label>
                 <input id="phone" name="telefon" type="tel" required>
               </div>
+
+              <!-- Zusätzliche Adressfelder für weitere Abladestellen -->
+              <div id="extraDrops" class="form-grid" style="grid-template-columns:1fr" hidden>
+                <div id="drop2">
+                  <label for="addr2">Weitere Abladestelle 2 (Adresse)</label>
+                  <input id="addr2" name="adresse2" type="text">
+                </div>
+                <div id="drop3">
+                  <label for="addr3">Weitere Abladestelle 3 (Adresse)</label>
+                  <input id="addr3" name="adresse3" type="text">
+                </div>
+                <div id="drop4">
+                  <label for="addr4">Weitere Abladestelle 4 (Adresse)</label>
+                  <input id="addr4" name="adresse4" type="text">
+                </div>
+                <div id="drop5">
+                  <label for="addr5">Weitere Abladestelle 5 (Adresse)</label>
+                  <input id="addr5" name="adresse5" type="text">
+                </div>
+              </div>
+
               <div class="form-grid" style="grid-template-columns:1fr">
                 <div>
                   <label for="note">Bemerkungen</label>
@@ -261,11 +297,11 @@
             <div class="newsletter" role="group" aria-labelledby="nlTitle">
               <img src="https://onecdn.io/media/09a82413-99f6-4343-86df-ab9feea45751/full" alt="Newsletter Mockup" loading="lazy" />
               <div>
-                <h3 id="nlTitle" class="title">Heizöl‑Update & Angebote per Mail erhalten</h3>
+                <h3 id="nlTitle" class="title">Heizöl-Update & Angebote per Mail erhalten</h3>
                 <p>Preis-Update, Spartipps & Aktionen. Jederzeit mit 1 Klick abbestellbar.</p>
                 <div class="checkline">
                   <input id="nl" type="checkbox" aria-describedby="nlTitle">
-                  <label for="nl">Ja, ich möchte das Heizöl‑Update per E‑Mail.</label>
+                  <label for="nl">Ja, ich möchte das Heizöl-Update per E-Mail.</label>
                 </div>
               </div>
             </div>
@@ -276,7 +312,7 @@
             </div>
             <div class="checkline">
               <input id="abo" type="checkbox">
-              <label for="abo">Ich möchte die Lieferpauschale sparen. Bitte informieren Sie mich unverbindlich über die Möglichkeiten des Heizöl‑Abos!</label>
+              <label for="abo">Ich möchte die Lieferpauschale sparen. Bitte informieren Sie mich unverbindlich über die Möglichkeiten des Heizöl-Abos!</label>
             </div>
 
             <div class="actions">
@@ -313,7 +349,7 @@
               <tr><td><strong>Kontakt</strong></td><td id="cContact">–</td></tr>
               <tr><td><strong>Adresse</strong></td><td id="cAddr">–</td></tr>
               <tr><td><strong>Newsletter</strong></td><td id="cNL">–</td></tr>
-              <tr id="cPremRow" hidden><td><strong>Produkt</strong></td><td>Premium‑Öl</td></tr>
+              <tr id="cPremRow" hidden><td><strong>Produkt</strong></td><td>Premium-Öl</td></tr>
             </table>
           </div>
           <div>
@@ -386,6 +422,25 @@
     document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
     const zipEl = document.getElementById('zip'); if(zipEl && inp.plz) zipEl.value = inp.plz;
 
+    // Zusätzliche Adressfelder je nach Abladestellen anzeigen
+    (function(){
+      const extraDropsEl = document.getElementById('extraDrops');
+      if(!extraDropsEl) return;
+      const count = Math.max(1, Math.min(5, Number(inp.abladestellen || 1)));
+      let any = false;
+      for(let i=2;i<=5;i++){
+        const row = document.getElementById('drop'+i);
+        if(!row) continue;
+        if(i <= count){
+          row.style.display = 'flex';
+          any = true;
+        }else{
+          row.style.display = 'none';
+        }
+      }
+      extraDropsEl.hidden = !any;
+    })();
+
     const EXPRESS_SURCHARGE = 100; const INVOICE_SURCHARGE_PER_L = 0.02;
     const expressRow = document.getElementById('expressRow');
     const expressVal = document.getElementById('express');
@@ -457,7 +512,11 @@
           bemerkungen: document.getElementById('note').value.trim(),
           agb: document.getElementById('agb').checked,
           newsletter: document.getElementById('nl').checked,
-          abo_interesse: document.getElementById('abo').checked
+          abo_interesse: document.getElementById('abo').checked,
+          adresse2: document.getElementById('addr2') ? document.getElementById('addr2').value.trim() : '',
+          adresse3: document.getElementById('addr3') ? document.getElementById('addr3').value.trim() : '',
+          adresse4: document.getElementById('addr4') ? document.getElementById('addr4').value.trim() : '',
+          adresse5: document.getElementById('addr5') ? document.getElementById('addr5').value.trim() : ''
         },
         fromIndex:{ eingabe: store?.eingabe ?? null, berechnung: store?.berechnung ?? null, timestamp: store?.timestamp ?? null },
         calc:{ meta: meta, input: b.input || inp0 || {}, komponentenPro100L: k, totals: t, formatted: f },
