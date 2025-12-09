@@ -33,7 +33,7 @@
     .price-hero .card{background:linear-gradient(180deg,#ffffff 0%, #fbfffb 100%);border:1px solid #e8efe3;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
     .price-hero .main{padding:18px 18px}
     .title-over-price{margin:0 0 8px;color:#184b10;font-size:clamp(1.3rem,2.4vw,1.6rem)}
-    .sup{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+    .sup{display:flex;gap:8px;align-items:center;margin-bottom:6px}
     .sup .badge{display:inline-flex;gap:6px;align-items:center;background:#e8f6e4;border:1px solid #cfeacc;color:#13470e;border-radius:999px;padding:4px 10px;font-weight:800;font-size:.8rem}
     .price{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:900;margin:.2rem 0;color:#0e3d08}
     .price small{font-weight:700;color:#2e4f25;font-size:.9rem}
@@ -54,11 +54,7 @@
     .badge{display:inline-flex;gap:6px;align-items:center;background:#e8f6e4;border:1px solid #cfeacc;color:#13470e;border-radius:999px;padding:4px 10px;font-weight:700;font-size:.78rem}
 
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    @media (max-width:820px){
-      .price-hero{grid-template-columns:1fr}
-      .meta{grid-template-columns:1fr 1fr}
-      .grid{grid-template-columns:1fr}
-    }
+    @media (max-width:820px){.price-hero{grid-template-columns:1fr}.meta{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
 
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
     .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
@@ -116,9 +112,11 @@
 
     /* === Print nur das Bestätigungs-Panel === */
     @media print {
+      /* Standard: alles ausblenden */
       body.print-only-confirm * {
         visibility: hidden !important;
       }
+      /* Nur das Panel sichtbar + sauber positioniert */
       body.print-only-confirm #confirm[aria-hidden="false"] .panel,
       body.print-only-confirm #confirm[aria-hidden="false"] .panel * {
         visibility: visible !important;
@@ -131,6 +129,7 @@
         border: none !important;
         max-width: 100% !important;
       }
+      /* Overlay-Hintergrund im Druck nicht zeigen */
       body.print-only-confirm #confirm[aria-hidden="false"] {
         background: transparent !important;
       }
@@ -147,14 +146,13 @@
 
   <div class="wrap">
     <section class="hero">
-      <h1>Preisübersicht &amp; Bestellung</h1>
+      <h1>Preisübersicht & Bestellung</h1>
       <div class="hero-notes">
         <p class="overlay-lead">Nach Ihrer Bestellung rufen wir Sie innerhalb von 1–2 Werktagen an und vereinbaren einen individuellen Liefertermin.</p>
         <ul class="overlay-list" aria-label="Leistungsmerkmale">
           <li>Individuelle Terminvereinbarung</li>
           <li>Tankwagengröße inkl. kleiner TKW</li>
           <li>Schlauchlänge bis 40&nbsp;m</li>
-          <li>Exklusiv: verkürzte Lieferzeit</li>
         </ul>
       </div>
     </section>
@@ -168,18 +166,9 @@
         </div>
         <div class="price" id="priceBig">—</div>
         <div class="meta" role="list">
-          <div class="kv" role="listitem">
-            <span class="k">Gesamtpreis netto</span>
-            <span class="v" id="priceNetMain">—</span>
-          </div>
-          <div class="kv" role="listitem">
-            <span class="k">Preis je 100&nbsp;L (netto)</span>
-            <span class="v" id="preis100Net">—</span>
-          </div>
-          <div class="kv" role="listitem">
-            <span class="k">Preis je 100&nbsp;L (brutto)</span>
-            <span class="v" id="preis100Brutto">—</span>
-          </div>
+          <div class="kv" role="listitem"><span class="k">Gesamtpreis netto</span><span class="v" id="priceNetMain">—</span></div>
+          <div class="kv" role="listitem"><span class="k">Preis je 100&nbsp;L (netto)</span><span class="v" id="preis100Net">—</span></div>
+          <div class="kv" role="listitem"><span class="k">Preis je 100&nbsp;L (brutto)</span><span class="v" id="preis100Brutto">—</span></div>
         </div>
         <p class="hint" id="expressHint" style="display:none">inkl. Expresszuschlag</p>
         <p class="hint" id="invoiceHint" style="display:none">inkl. Aufpreis Zahlung auf Rechnung</p>
@@ -199,7 +188,7 @@
           <button class="btn" id="btnPrint" type="button">PDF / Drucken</button>
           <a class="btn secondary" href="./index.html">Neue Berechnung</a>
         </div>
-        <p class="hint">Alle Angaben ohne Gewähr und auf Anfrage.</p>
+        <p class="hint">Alle Angaben ohne Gewähr.</p>
       </aside>
     </section>
 
@@ -211,7 +200,7 @@
             <p class="legend-title">Zahlungsmethode</p>
             <div class="choices">
               <label class="choice"><input type="radio" name="payment" value="Barzahlung" required> Barzahlung</label>
-              <label class="choice"><input type="radio" name="payment" value="EC-Karte"> EC-Karte</label>
+              <label class="choice"><input type="radio" name="payment" value="EC-Karte"> EC‑Karte</label>
               <label class="choice"><input type="radio" name="payment" value="Vorabüberweisung"> Vorabüberweisung</label>
               <label class="choice"><input type="radio" name="payment" value="Rechnung"> Rechnung <small>(+0,02 € / L)</small></label>
             </div>
@@ -221,7 +210,7 @@
             <p class="legend-title">Lieferzeit</p>
             <div class="choices">
               <label class="choice"><input type="radio" name="delivery" value="ca. 2-3 Wochen" required> ca. 2–3 Wochen</label>
-              <label class="choice"><input type="radio" name="delivery" value="1-2 Werktage (Express)"> 1–2 Werktage <small>Express (ca. 100 € – Preis auf Anfrage)</small></label>
+              <label class="choice"><input type="radio" name="delivery" value="1-2 Werktage (Express)"> 1–2 Werktage <small>Express (+100 €)</small></label>
             </div>
           </section>
 
@@ -241,7 +230,7 @@
                 <input id="company" name="firma" type="text">
               </div>
               <div>
-                <label for="addr">Adresse (Abladestelle 1) *</label>
+                <label for="addr">Adresse *</label>
                 <input id="addr" name="adresse" type="text" required>
               </div>
               <div>
@@ -253,79 +242,17 @@
                 <input id="city" name="stadt" type="text" required>
               </div>
               <div>
-                <label for="mail">E-Mailadresse *</label>
+                <label for="mail">E‑Mailadresse *</label>
                 <input id="mail" name="email" type="email" required>
               </div>
               <div>
                 <label for="phone">Telefonnummer *</label>
                 <input id="phone" name="telefon" type="tel" required>
               </div>
-
-              <!-- Zusätzliche Abladestellen (2–5), werden per JS je nach Auswahl angezeigt -->
-              <div id="drop2" class="form-grid" style="display:none;grid-column:1/-1;border-top:1px dashed #d9e3d3;padding-top:10px;margin-top:4px;">
-                <div>
-                  <label for="addr2">Adresse Abladestelle 2</label>
-                  <input id="addr2" name="adresse2" type="text" placeholder="Straße & Hausnummer">
-                </div>
-                <div>
-                  <label for="zip2">PLZ Abladestelle 2</label>
-                  <input id="zip2" name="plz2" type="text" inputmode="numeric" pattern="\d{5}">
-                </div>
-                <div>
-                  <label for="city2">Ort Abladestelle 2</label>
-                  <input id="city2" name="stadt2" type="text">
-                </div>
-              </div>
-
-              <div id="drop3" class="form-grid" style="display:none;grid-column:1/-1;border-top:1px dashed #d9e3d3;padding-top:10px;margin-top:4px;">
-                <div>
-                  <label for="addr3">Adresse Abladestelle 3</label>
-                  <input id="addr3" name="adresse3" type="text" placeholder="Straße & Hausnummer">
-                </div>
-                <div>
-                  <label for="zip3">PLZ Abladestelle 3</label>
-                  <input id="zip3" name="plz3" type="text" inputmode="numeric" pattern="\d{5}">
-                </div>
-                <div>
-                  <label for="city3">Ort Abladestelle 3</label>
-                  <input id="city3" name="stadt3" type="text">
-                </div>
-              </div>
-
-              <div id="drop4" class="form-grid" style="display:none;grid-column:1/-1;border-top:1px dashed #d9e3d3;padding-top:10px;margin-top:4px;">
-                <div>
-                  <label for="addr4">Adresse Abladestelle 4</label>
-                  <input id="addr4" name="adresse4" type="text" placeholder="Straße & Hausnummer">
-                </div>
-                <div>
-                  <label for="zip4">PLZ Abladestelle 4</label>
-                  <input id="zip4" name="plz4" type="text" inputmode="numeric" pattern="\d{5}">
-                </div>
-                <div>
-                  <label for="city4">Ort Abladestelle 4</label>
-                  <input id="city4" name="stadt4" type="text">
-                </div>
-              </div>
-
-              <div id="drop5" class="form-grid" style="display:none;grid-column:1/-1;border-top:1px dashed #d9e3d3;padding-top:10px;margin-top:4px;">
-                <div>
-                  <label for="addr5">Adresse Abladestelle 5</label>
-                  <input id="addr5" name="adresse5" type="text" placeholder="Straße & Hausnummer">
-                </div>
-                <div>
-                  <label for="zip5">PLZ Abladestelle 5</label>
-                  <input id="zip5" name="plz5" type="text" inputmode="numeric" pattern="\d{5}">
-                </div>
-                <div>
-                  <label for="city5">Ort Abladestelle 5</label>
-                  <input id="city5" name="stadt5" type="text">
-                </div>
-              </div>
-
               <div class="form-grid" style="grid-template-columns:1fr">
                 <div>
                   <label for="note">Bemerkungen</label>
-                  <textarea id="note" name="bemerkungen" placeholder="z. B. Tank schwer zugänglich / mehr als 40 m Schlauch, …"></textarea>
+                  <textarea id="note" name="bemerkungen" placeholder="z. B. Tank ist schwer zugänglich…"></textarea>
                 </div>
               </div>
             </div>
@@ -333,11 +260,11 @@
             <div class="newsletter" role="group" aria-labelledby="nlTitle">
               <img src="https://onecdn.io/media/09a82413-99f6-4343-86df-ab9feea45751/full" alt="Newsletter Mockup" loading="lazy" />
               <div>
-                <h3 id="nlTitle" class="title">Heizöl-Update &amp; Angebote per Mail erhalten</h3>
-                <p>Preis-Update, Spartipps &amp; Aktionen. Jederzeit mit 1 Klick abbestellbar.</p>
+                <h3 id="nlTitle" class="title">Heizöl‑Update & Angebote per Mail erhalten</h3>
+                <p>Preis-Update, Spartipps & Aktionen. Jederzeit mit 1 Klick abbestellbar.</p>
                 <div class="checkline">
                   <input id="nl" type="checkbox" aria-describedby="nlTitle">
-                  <label for="nl">Ja, ich möchte das Heizöl-Update per E-Mail.</label>
+                  <label for="nl">Ja, ich möchte das Heizöl‑Update per E‑Mail.</label>
                 </div>
               </div>
             </div>
@@ -348,7 +275,7 @@
             </div>
             <div class="checkline">
               <input id="abo" type="checkbox">
-              <label for="abo">Ich möchte die Lieferpauschale sparen. Bitte informieren Sie mich unverbindlich über die Möglichkeiten des Heizöl-Abos!</label>
+              <label for="abo">Ich möchte die Lieferpauschale sparen. Bitte informieren Sie mich unverbindlich über die Möglichkeiten des Heizöl‑Abos!</label>
             </div>
 
             <div class="actions">
@@ -385,7 +312,7 @@
               <tr><td><strong>Kontakt</strong></td><td id="cContact">–</td></tr>
               <tr><td><strong>Adresse</strong></td><td id="cAddr">–</td></tr>
               <tr><td><strong>Newsletter</strong></td><td id="cNL">–</td></tr>
-              <tr id="cPremRow" hidden><td><strong>Produkt</strong></td><td>Premium-Öl</td></tr>
+              <tr id="cPremRow" hidden><td><strong>Produkt</strong></td><td>Premium‑Öl</td></tr>
             </table>
           </div>
           <div>
@@ -419,23 +346,11 @@
     const inp = { plz: inp0.plz || '', liefermengeL: Number(inp0.liefermengeL ?? inp0.liefermenge ?? 0), abladestellen: Number(inp0.abladestellen ?? 1), premium: Boolean(inp0.premium) };
     const k = b.komponentenPro100L||{}; const t = b.totals||{}; const f = b.formatted||{};
 
-    if(!Object.keys(b).length){
-      const heroTitle = document.querySelector('.price-hero .title-over-price') || document.querySelector('.hero h1');
-      if(heroTitle) heroTitle.textContent = 'Keine Daten gefunden';
-    }
+    if(!Object.keys(b).length){ const heroTitle = document.querySelector('.price-hero .title-over-price') || document.querySelector('.hero h1'); if(heroTitle) heroTitle.textContent = 'Keine Daten gefunden'; }
 
-    const badge = document.getElementById('premiumBadge');
-    if(badge) badge.hidden = !inp.premium;
+    const badge = document.getElementById('premiumBadge'); if(badge) badge.hidden = !inp.premium;
 
-    fill('plz', inp.plz||'—');
-    fill('ablade', numf(inp.abladestellen||1));
-
-    // Zusätzliche Adressfelder je nach Anzahl der Abladestellen (2–5)
-    for(let i=2;i<=5;i++){
-      const grp = document.getElementById('drop'+i);
-      if(!grp) continue;
-      grp.style.display = (inp.abladestellen >= i) ? 'grid' : 'none';
-    }
+    fill('plz', inp.plz||'—'); fill('ablade', numf(inp.abladestellen||1));
 
     const price100Base = Number(k.endpreisPro100L ?? (f.endpreisPro100L ? Number(String(f.endpreisPro100L).replace(/[^0-9,.-]/g,'').replace(',','.')): NaN));
 
@@ -470,8 +385,7 @@
     document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
     const zipEl = document.getElementById('zip'); if(zipEl && inp.plz) zipEl.value = inp.plz;
 
-    const EXPRESS_SURCHARGE = 100;
-    const INVOICE_SURCHARGE_PER_L = 0.02;
+    const EXPRESS_SURCHARGE = 100; const INVOICE_SURCHARGE_PER_L = 0.02;
     const expressRow = document.getElementById('expressRow');
     const expressVal = document.getElementById('express');
     const expressHint = document.getElementById('expressHint');
@@ -479,55 +393,19 @@
     const invoiceVal = document.getElementById('invoice');
     const invoiceHint = document.getElementById('invoiceHint');
 
-    function isExpressSelected(){
-      const val = document.querySelector('input[name="delivery"]:checked')?.value || '';
-      return /1-2\s*Werktage|Express/i.test(val);
-    }
-    function isInvoiceSelected(){
-      const val = document.querySelector('input[name="payment"]:checked')?.value || '';
-      return /Rechnung/i.test(val);
-    }
+    function isExpressSelected(){ const val = document.querySelector('input[name="delivery"]:checked')?.value || ''; return /1-2\s*Werktage|Express/i.test(val); }
+    function isInvoiceSelected(){ const val = document.querySelector('input[name="payment"]:checked')?.value || ''; return /Rechnung/i.test(val); }
 
     function recalcTotals(){
       let surchargesNet = 0;
-
-      if(isExpressSelected()){
-        expressRow.style.display = 'flex';
-        expressVal.textContent = euro(EXPR
-ESS_SURCHARGE);
-        expressHint.style.display = 'block';
-        surchargesNet += EXPRESS_SURCHARGE;
-      } else {
-        expressRow.style.display = 'none';
-        expressHint.style.display = 'none';
-      }
-
+      if(isExpressSelected()){ expressRow.style.display = 'flex'; expressVal.textContent = euro(EXPRESS_SURCHARGE); expressHint.style.display = 'block'; surchargesNet += EXPRESS_SURCHARGE; } else { expressRow.style.display = 'none'; expressHint.style.display = 'none'; }
       const invoiceNet = isInvoiceSelected() ? (inp.liefermengeL * INVOICE_SURCHARGE_PER_L) : 0;
-      if(invoiceNet > 0){
-        invoiceRow.style.display = 'flex';
-        invoiceVal.textContent = euro(invoiceNet);
-        invoiceHint.style.display = 'block';
-      } else {
-        invoiceRow.style.display = 'none';
-        invoiceHint.style.display = 'none';
-      }
-
+      if(invoiceNet > 0){ invoiceRow.style.display = 'flex'; invoiceVal.textContent = euro(invoiceNet); invoiceHint.style.display = 'block'; } else { invoiceRow.style.display = 'none'; invoiceHint.style.display = 'none'; }
       surchargesNet += invoiceNet;
-
-      const mwstNeu = mwstBaseNum + surchargesNet * MWST_RATE;
-      mwstEl.textContent = euro(mwstNeu) + ` (${MWST_SATZ}%)`;
-
-      const bruttoNeu = baseBrutto + surchargesNet * (1 + MWST_RATE);
-      priceBigEl.textContent = euro(bruttoNeu);
-
-      const nettoBase = Number(t.zwischensummeNetto || 0);
-      priceNetMainEl.textContent = euro(nettoBase + surchargesNet);
-
-      const addPer100L = isInvoiceSelected() ? 2 : 0;
-      const net100 = isFinite(price100Base) ? price100Base + addPer100L : NaN;
-      const brutto100 = isFinite(net100) ? net100 * (1 + MWST_RATE) : NaN;
-      preis100NetEl.textContent = isFinite(net100) ? euro(net100) : '—';
-      preis100BruttoEl.textContent = isFinite(brutto100) ? euro(brutto100) : '—';
+      const mwstNeu = mwstBaseNum + surchargesNet * MWST_RATE; mwstEl.textContent = euro(mwstNeu) + ` (${MWST_SATZ}%)`;
+      const bruttoNeu = baseBrutto + surchargesNet * (1 + MWST_RATE); priceBigEl.textContent = euro(bruttoNeu);
+      const nettoBase = Number(t.zwischensummeNetto || 0); priceNetMainEl.textContent = euro(nettoBase + surchargesNet);
+      const addPer100L = isInvoiceSelected() ? 2 : 0; const net100 = isFinite(price100Base) ? price100Base + addPer100L : NaN; const brutto100 = isFinite(net100) ? net100 * (1 + MWST_RATE) : NaN; preis100NetEl.textContent = isFinite(net100) ? euro(net100) : '—'; preis100BruttoEl.textContent = isFinite(brutto100) ? euro(brutto100) : '—';
     }
 
     document.querySelectorAll('input[name="delivery"]').forEach(r=> r.addEventListener('change', recalcTotals));
@@ -536,13 +414,7 @@ ESS_SURCHARGE);
 
     // ===== UI Helpers =====
     const toast = document.getElementById('toast');
-    function showToast(msg, isErr=false){
-      if(!toast) return;
-      toast.textContent = msg;
-      toast.classList.toggle('err', !!isErr);
-      toast.style.display='block';
-      setTimeout(()=>{toast.style.display='none';}, 2800);
-    }
+    function showToast(msg, isErr=false){ if(!toast) return; toast.textContent = msg; toast.classList.toggle('err', !!isErr); toast.style.display='block'; setTimeout(()=>{toast.style.display='none';}, 2800); }
     const confirmEl = document.getElementById('confirm');
     function openConfirm(){ confirmEl?.setAttribute('aria-hidden','false'); }
     function closeConfirm(){ confirmEl?.setAttribute('aria-hidden','true'); }
@@ -567,9 +439,7 @@ ESS_SURCHARGE);
       const surchargesNet = invoiceNet + expressNet;
       const mwstNeu = Number(t.mwstBetrag||0) + surchargesNet * MWST_RATE;
       const bruttoNeu = Number(t.gesamtBrutto||0) + surchargesNet * (1 + MWST_RATE);
-      const addPer100L = isInvoiceSelected() ? 2 : 0;
-      const net100 = isFinite(Number(price100Base)) ? Number(price100Base) + addPer100L : null;
-      const brutto100 = net100!=null ? net100 * (1 + MWST_RATE) : null;
+      const addPer100L = isInvoiceSelected() ? 2 : 0; const net100 = isFinite(Number(price100Base)) ? Number(price100Base) + addPer100L : null; const brutto100 = net100!=null ? net100 * (1 + MWST_RATE) : null;
 
       const payload = {
         order:{
@@ -586,45 +456,17 @@ ESS_SURCHARGE);
           bemerkungen: document.getElementById('note').value.trim(),
           agb: document.getElementById('agb').checked,
           newsletter: document.getElementById('nl').checked,
-          abo_interesse: document.getElementById('abo').checked,
-          adresse2: document.getElementById('addr2')?.value.trim() || '',
-          plz2: document.getElementById('zip2')?.value.trim() || '',
-          stadt2: document.getElementById('city2')?.value.trim() || '',
-          adresse3: document.getElementById('addr3')?.value.trim() || '',
-          plz3: document.getElementById('zip3')?.value.trim() || '',
-          stadt3: document.getElementById('city3')?.value.trim() || '',
-          adresse4: document.getElementById('addr4')?.value.trim() || '',
-          plz4: document.getElementById('zip4')?.value.trim() || '',
-          stadt4: document.getElementById('city4')?.value.trim() || '',
-          adresse5: document.getElementById('addr5')?.value.trim() || '',
-          plz5: document.getElementById('zip5')?.value.trim() || '',
-          stadt5: document.getElementById('city5')?.value.trim() || ''
+          abo_interesse: document.getElementById('abo').checked
         },
         fromIndex:{ eingabe: store?.eingabe ?? null, berechnung: store?.berechnung ?? null, timestamp: store?.timestamp ?? null },
         calc:{ meta: meta, input: b.input || inp0 || {}, komponentenPro100L: k, totals: t, formatted: f },
-        clientAdjustments:{
-          invoicePerL: INVOICE_SURCHARGE_PER_L,
-          invoiceNet,
-          expressNet,
-          surchargesNet,
-          net100AfterAdj: net100,
-          gross100AfterAdj: brutto100,
-          nettoGesamtAfterAdj: nettoBase + surchargesNet,
-          mwstAfterAdj: mwstNeu,
-          bruttoGesamtAfterAdj: bruttoNeu
-        },
+        clientAdjustments:{ invoicePerL: INVOICE_SURCHARGE_PER_L, invoiceNet, expressNet, surchargesNet, net100AfterAdj: net100, gross100AfterAdj: brutto100, nettoGesamtAfterAdj: nettoBase + surchargesNet, mwstAfterAdj: mwstNeu, bruttoGesamtAfterAdj: bruttoNeu },
         meta:{ page:'seite2', submittedAt: new Date().toISOString() }
       };
 
-      btnOrder.disabled = true;
-      const oldTxt = btnOrder.textContent;
-      btnOrder.textContent = 'Senden…';
+      btnOrder.disabled = true; const oldTxt = btnOrder.textContent; btnOrder.textContent = 'Senden…';
       try{
-        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook/oelrechner-bestellung',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
+        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook/oelrechner-bestellung',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         const text = await res.text();
         if(!res.ok) throw new Error('HTTP '+res.status+' | '+text.slice(0,200));
 
@@ -647,8 +489,7 @@ ESS_SURCHARGE);
         showToast('Fehler beim Senden: '+err.message, true);
         if(!toast) alert('Fehler beim Senden: '+err.message);
       }finally{
-        btnOrder.disabled = false;
-        btnOrder.textContent = oldTxt;
+        btnOrder.disabled = false; btnOrder.textContent = oldTxt;
       }
     });
   </script>
