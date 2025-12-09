@@ -15,9 +15,8 @@
     *{box-sizing:border-box}
     html{font-size:15px;overflow-x:hidden}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
-    header{background:var(--brand);padding:22px 18px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    header{background:var(--brand);padding:22px 18px;color:#fff;display:flex;align-items:center;justify-content:center}
     .logo{height:34px}
-    header .title{font-weight:700;font-size:1rem;margin:0}
 
     .wrap{max-width:1040px;margin:0 auto;padding:18px}
 
@@ -59,7 +58,6 @@
       .price-hero{grid-template-columns:1fr}
       .meta{grid-template-columns:1fr 1fr}
       .grid{grid-template-columns:1fr}
-      header{flex-direction:column;align-items:flex-start}
     }
 
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
@@ -145,7 +143,6 @@
 <body>
   <header>
     <img class="logo" src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" alt="Raiffeisen Logo" />
-    <p class="title">Heizöl Preisübersicht</p>
   </header>
 
   <div class="wrap">
@@ -328,7 +325,7 @@
               <div class="form-grid" style="grid-template-columns:1fr">
                 <div>
                   <label for="note">Bemerkungen</label>
-                  <textarea id="note" name="bemerkungen" placeholder="z. B. Tank schwer zugänglich / mehr als 40 m Schlauch,usw. …"></textarea>
+                  <textarea id="note" name="bemerkungen" placeholder="z. B. Tank schwer zugänglich / mehr als 40 m Schlauch, …"></textarea>
                 </div>
               </div>
             </div>
@@ -496,7 +493,8 @@
 
       if(isExpressSelected()){
         expressRow.style.display = 'flex';
-        expressVal.textContent = euro(EXPRESS_SURCHARGE);
+        expressVal.textContent = euro(EXPR
+ESS_SURCHARGE);
         expressHint.style.display = 'block';
         surchargesNet += EXPRESS_SURCHARGE;
       } else {
