@@ -612,6 +612,17 @@
           const points = Array.isArray(data?.points) ? data.points : [];
           const labels = points.map(p => fmtDE(p.date));
           const values = points.map(p => Number(p.price));
+          const finite = values.filter(v => Number.isFinite(v));
+          const vMin = finite.length ? Math.min(...finite) : 0;
+          const vMax = finite.length ? Math.max(...finite) : 200;
+
+          // Padding macht die Wellen sichtbar (aber bleibt im 0–200 Rahmen)
+          const span = Math.max(1, vMax - vMin);
+          const pad  = Math.min(18, Math.max(4, span * 0.5));
+
+          const yMin = Math.max(0,  vMin - pad);
+          const yMax = Math.min(200, vMax + pad);
+          
 
           const last = data?.last?.date ? fmtDE(data.last.date) : '—';
           if(metaEl) metaEl.textContent = `Zeitraum: ${String(range).toUpperCase()} · Letzter Stand: ${last}`;
@@ -648,8 +659,8 @@
               scales: {
                 x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
                 y: {
-                  min: 0,
-                  max: 200,
+                  min: yMin,
+                  max: yMax,
                   ticks: { callback: (v)=> `${v}` }
                 }
               }
