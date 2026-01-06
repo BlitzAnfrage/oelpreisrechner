@@ -226,9 +226,25 @@
 
       <button class="btn" id="submitBtn" type="submit">Preis berechnen</button>
     </form>
-  </section>
+  <section class="chart-card" aria-label="Heizölpreis-Verlauf">
+  <div style="padding:14px 16px; display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+    <strong style="font-size:1rem">Heizölpreis-Verlauf</strong>
 
-  <footer class="footer">
+    <div style="display:flex; gap:8px; flex-wrap:wrap">
+      <button type="button" class="btn" style="width:auto;padding:10px 12px" data-range="3m">3 Monate</button>
+      <button type="button" class="btn" style="width:auto;padding:10px 12px" data-range="1y">1 Jahr</button>
+      <button type="button" class="btn" style="width:auto;padding:10px 12px" data-range="3y">3 Jahre</button>
+    </div>
+  </div>
+
+  <div class="chart-inner">
+    <iframe
+      id="priceChartFrame"
+      src="https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=3m"
+      title="Heizölpreis Verlauf"
+      loading="lazy"></iframe>
+  </div>
+</section>
     <p>© 2025 Raiffeisenmarkt Wiesbach – Alle Rechte vorbehalten</p>
     <p>
       <a href="https://raiffeisenmarkt-wiesbach.onepage.me/impressum" target="_blank" rel="noopener">Impressum</a>
@@ -349,6 +365,19 @@
     if(closeChartBtn){ closeChartBtn.addEventListener('click', closeModal); }
     if(chartModal){ chartModal.addEventListener('click', (e)=>{ if(e.target===chartModal) closeModal(); }); }
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+    // Chart Range Switch (3m / 1y / 3y)
+(function(){
+  const base = 'https://n8n.srv899952.hstgr.cloud/webhook/oelchart';
+  const frame = document.getElementById('priceChartFrame');
+  if(!frame) return;
+
+  document.querySelectorAll('[data-range]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const r = btn.getAttribute('data-range');
+      frame.src = `${base}?range=${encodeURIComponent(r)}`;
+    });
+  });
+})();
   </script>
 </body>
 </html>
