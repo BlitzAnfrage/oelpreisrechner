@@ -257,146 +257,57 @@
     </p>
   </footer>
 
-  <!-- Chart.js + Time Adapter (für Monats-Achse) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+<!-- Time Adapter (WICHTIG für type:'time') -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
 
-  <script>
-    // ========= FORM (wie gehabt) =========
-    const oilSlider = document.getElementById('oilRange');
-    const FORM = document.getElementById('oilForm');
-    const BTN  = document.getElementById('submitBtn');
-    const ERR  = document.getElementById('errMsg');
+<script>
+  const chartErr = document.getElementById('chartErr');
+  const rangeLabel = document.getElementById('rangeLabel');
+  const rangeBtns = Array.from(document.querySelectorAll('.rangeBtn'));
+  let chartInstance = null;
 
-    (function(){
-      const MIN = 100, MAX = 15000, STEP = 100;
-      function normalize(v){
-        let n = parseInt(String(v).replace(/\D+/g,''), 10);
-        if (isNaN(n)) n = MIN;
-        n = Math.round(n / STEP) * STEP;
-        n = Math.max(MIN, Math.min(MAX, n));
-        return n;
-      }
-      if(oilSlider){
-        oilSlider.addEventListener('blur',  ()=> oilSlider.value = normalize(oilSlider.value));
-        oilSlider.addEventListener('change',()=> oilSlider.value = normalize(oilSlider.value));
-      }
-    })();
+  function setActiveRangeBtn(range){
+    rangeBtns.forEach(b => b.classList.toggle('active', b.dataset.range === range));
+    const label =
+      range === '3m' ? '3 Monate' :
+      range === '6m' ? '6 Monate' :
+      range === '1y' ? '1 Jahr' :
+      range === '3y' ? '3 Jahre' : range;
 
-    const area1 = ["66260","66262","66265","66272","66273","66274","66275","66280","66281","66282","66284","66287","66288","66289","66292","66293","66294","66295","66299","66337","66338","66340","66341","66346","66511","66512","66513","66514","66515","66516","66517","66518","66519","66520","66521","66522","66531","66538","66539","66540","66549","66550","66552","66553","66557","66558","66559","66560","66564","66565","66566","66567","66571","66572","66573","66575","66578","66579","66580","66583","66584","66585","66587","66589","66591","66592","66593","66594","66595","66596","66597","66630","66631","66632","66633","66636","66641","66642","66643","66646","66791","66792","66793","66807","66809","66811","66812","66813","66814","66819","66822","66832","66833","66835","66836","66839"];
-    const area2 = ["66459","66640","66629","66701","66740","66763","66773","66774","66775","66777","66787","66780","66794","66795","66798","66802","66000","66001","66002","66003","66004","66005","66006","66007","66008","66009","66010","66011","66012","66013","66014","66015","66016","66017","66019","66020","66021","66022","66023","66024","66025","66026","66027","66028","66029","66030","66031","66032","66033","66042","66043","66044","66045","66046","66047","66051","66053","66055","66057","66059","66060","66061","66063","66065","66067","66090","66091","66092","66093","66094","66095","66099","66100","66101","66102","66103","66104","66105","66106","66107","66108","66109","66111","66113","66115","66117","66119","66121","66123","66125","66126","66127","66128","66129","66130","66131","66132","66133","66140","66141","66142","66143","66150","66200","66259","66353","66354","66355","66359","66361","66362","66363","66364","66365","66366","66367","66368","66369","66370","66376","66377","66386","66803","66804","66806","66333"];
-    const area3 = ["66687","66129","66130","66629","66271","66352","66399","66424","66679","66693","66706","66709","66780","66798","66802","66440","66453","66620","66625","66663"];
+    rangeLabel.textContent = 'Zeitraum: ' + label;
+  }
 
-    function areaByPlz(plz){
-      if (area1.includes(plz)) return 'Area 1';
-      if (area2.includes(plz)) return 'Area 2';
-      if (area3.includes(plz)) return 'Area 3';
-      return '';
-    }
+  async function loadChart(range){
+    chartErr.style.display = 'none';
+    chartErr.textContent = '';
+    setActiveRangeBtn(range);
 
-    document.getElementById('plz').addEventListener('input', (e)=>{
-      const plz = e.target.value.replace(/\D+/g,'').slice(0,5);
-      e.target.value = plz;
-      const a = areaByPlz(plz);
-      ERR.style.display = a ? 'none' : (plz.length === 5 ? 'block' : 'none');
-    });
+    // Cachebuster, damit 6m/1y nicht "wie 3m" gecached wird
+    const url = `https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=${encodeURIComponent(range)}&_=${Date.now()}`;
 
-    const premiumCheckbox = document.getElementById('premium');
-    const premiumSlider   = document.querySelector('.switch .slider');
-    if (premiumSlider){ premiumSlider.addEventListener('click', ()=>{ premiumCheckbox.checked = !premiumCheckbox.checked; }); }
+    let payload;
+    try{
+      const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      payload = await res.json();
 
-    FORM.addEventListener('submit', async (ev)=>{
-      ev.preventDefault();
+      // falls n8n als Array zurückkommt: [{...}]
+      if (Array.isArray(payload)) payload = payload[0];
 
-      const liefermenge   = parseInt(oilSlider.value,10);
-      const plz           = document.getElementById('plz').value.trim();
-      const abladestellen = parseInt(document.getElementById('ablade').value,10);
-      const premium       = document.getElementById('premium').checked;
-      const area          = areaByPlz(plz);
+      // optional: wenn du später Monatsdaten sendest:
+      const labels = Array.isArray(payload.monthLabels) ? payload.monthLabels : payload.labels;
+      const data   = Array.isArray(payload.monthData)   ? payload.monthData   : payload.data;
 
-      if (!area){ ERR.style.display='block'; return; }
-
-      const payload = { liefermenge, plz, abladestellen, area, premium };
-
-      BTN.disabled = true; BTN.textContent = 'Berechne…';
-      try{
-        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook/oelrechner',{
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const text = await res.text();
-        if(!res.ok) throw new Error('HTTP '+res.status+' | '+text.slice(0,200));
-        let data; try{ data = JSON.parse(text) } catch{ throw new Error('Antwort kein JSON: '+text.slice(0,200)); }
-        const result = Array.isArray(data) ? data[0] : data;
-
-        sessionStorage.setItem('oelForm', JSON.stringify({
-          eingabe: { liefermenge, plz, abladestellen, area, premium },
-          berechnung: result,
-          timestamp: Date.now()
-        }));
-
-        window.location.href = './seite2.html';
-      } catch(err){
-        alert('Fehler: '+err.message);
-      } finally {
-        BTN.disabled = false; BTN.textContent = 'Preis berechnen';
-      }
-    });
-
-    // ========= CHART (Monats-Achse, 3m/6m/1y/3y) =========
-    const chartErr = document.getElementById('chartErr');
-    const rangeLabel = document.getElementById('rangeLabel');
-    const rangeBtns = Array.from(document.querySelectorAll('.rangeBtn'));
-
-    let chartInstance = null;
-
-    function labelForRange(r){
-      if (r === '3m') return '3 Monate';
-      if (r === '6m') return '6 Monate';
-      if (r === '1y') return '1 Jahr';
-      if (r === '3y') return '3 Jahre';
-      return r;
-    }
-
-    function setActiveRangeBtn(range){
-      rangeBtns.forEach(b => b.classList.toggle('active', b.dataset.range === range));
-      rangeLabel.textContent = 'Zeitraum: ' + labelForRange(range);
-    }
-
-    async function loadChart(range){
-      chartErr.style.display = 'none';
-      chartErr.textContent = '';
-      setActiveRangeBtn(range);
-
-      const url = `https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=${encodeURIComponent(range)}`;
-
-      let payload;
-      try{
-        const res = await fetch(url, { method: 'GET' });
-        if(!res.ok) throw new Error('HTTP ' + res.status);
-        payload = await res.json();
-
-        // falls n8n als Array zurückkommt: [{...}]
-        if (Array.isArray(payload)) payload = payload[0];
-
-        if(!payload || !Array.isArray(payload.labels) || !Array.isArray(payload.data)){
-          throw new Error('Unerwartete Antwort: labels/data fehlen');
-        }
-      } catch(e){
-        chartErr.style.display = 'block';
-        chartErr.textContent = 'Chart konnte nicht geladen werden: ' + e.message;
-        return;
+      if(!payload || !Array.isArray(labels) || !Array.isArray(data) || labels.length !== data.length){
+        throw new Error('Unerwartete Antwort: labels/data fehlen oder Länge passt nicht');
       }
 
-      // Punkte für Time-Scale
-      const points = payload.labels.map((d, i) => ({
-        x: d,                  // "YYYY-MM-DD"
-        y: payload.data[i]
-      }));
+      // Punkte für Time-Scale (labels müssen "YYYY-MM-DD" sein)
+      const points = labels.map((d, i) => ({ x: d, y: data[i] }));
 
       const ctx = document.getElementById('oilChart');
-
       if(chartInstance) chartInstance.destroy();
 
       chartInstance = new Chart(ctx, {
@@ -415,6 +326,7 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -428,7 +340,6 @@
               type: 'time',
               time: {
                 unit: 'month',
-                // neutral, ohne Sprachproblem: nur Monat/Jahr
                 displayFormats: { month: 'MM/yy' }
               },
               ticks: {
@@ -439,21 +350,23 @@
             },
             y: {
               beginAtZero: false,
-              ticks: {
-                callback: (v) => v + ' €'
-              }
+              ticks: { callback: (v) => v + ' €' }
             }
           }
         }
       });
+
+    } catch(e){
+      chartErr.style.display = 'block';
+      chartErr.textContent = 'Chart konnte nicht geladen werden: ' + e.message;
     }
+  }
 
-    rangeBtns.forEach(btn => {
-      btn.addEventListener('click', () => loadChart(btn.dataset.range));
-    });
+  rangeBtns.forEach(btn => {
+    btn.addEventListener('click', () => loadChart(btn.dataset.range));
+  });
 
-    // initial
-    loadChart('3m');
-  </script>
+  loadChart('3m');
+</script>
 </body>
 </html>
