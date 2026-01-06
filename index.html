@@ -10,63 +10,20 @@
   <style>
     :root{
       --brand:#6EC054; --brand-dark:#4c7f2d; --ink:#222; --bg:#f7faf7; --card:#ffffff;
-      --muted:#6b6b6b; --ring:rgba(110,192,84,.25); --shadow:0 12px 30px rgba(0,0,0,.08);
-      --chart-max-width: 1000px;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --chart-max-width:1000px;
     }
     *{box-sizing:border-box}
-    html{font-size:15px; overflow-x:hidden; width:100%; max-width:100vw}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--ink);font-weight:400;overflow-x:hidden; width:100%; max-width:100vw}
-
-    header{background:var(--brand);position:relative;text-align:center;color:#fff;
-      padding:26px 60px;
-      padding-top:calc(26px + env(safe-area-inset-top));
-      padding-left:calc(60px + env(safe-area-inset-left));
-      padding-right:calc(60px + env(safe-area-inset-right));
-    }
+    body{margin:0;font-family:system-ui;background:var(--bg);color:var(--ink)}
+    header{background:var(--brand);padding:26px;text-align:center}
     .logo{height:40px}
 
-    .hero{padding:2.5rem 1rem;background:#fff;text-align:center;border-bottom:1px solid #eef2ea}
-    .hero h1{margin:0;font-size:clamp(1.4rem,2.1vw,1.9rem);font-weight:700;letter-spacing:.2px;display:inline-block;background:var(--brand);color:#fff;padding:.55rem .9rem;border-radius:10px}
-    .hero p{margin:.75rem auto 0;max-width:1000px;color:#2d2d2d;font-size:1rem}
+    .hero{padding:2rem 1rem;background:#fff;text-align:center}
+    .hero h1{background:var(--brand);color:#fff;display:inline-block;padding:.5rem .9rem;border-radius:10px}
 
-    .steps{max-width:1000px;margin:1rem auto;background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:.8rem 1rem}
-    .steps ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;padding:0;margin:0}
-    .steps li{display:flex;gap:.65rem;align-items:flex-start;padding:.6rem .6rem;border-radius:10px}
-    .steps .dot{flex:0 0 30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.95rem}
-    .steps .txt{font-size:.9rem;line-height:1.25}
-    .steps .txt strong{font-weight:700}
-
-    .form-wrap{padding:1.2rem}
-    .form{max-width:1000px;margin:0 auto;background:var(--card);border:1px solid #e8efe3;border-radius:16px;padding:22px 22px 26px;box-shadow:var(--shadow)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-bottom:22px}
-    .form-group{display:flex;flex-direction:column}
-    label{font-weight:600;font-size:.92rem;margin-bottom:.35rem;color:#1f2b1c}
-    input[type="text"],select,input[type="number"]{border:1.7px solid #d9e3d3;border-radius:10px;padding:10px 12px;font-size:.95rem;outline:none;transition:.2s;background:#fff}
-    input:focus,select:focus{border-color:var(--brand-dark);box-shadow:0 0 0 4px var(--ring)}
-    .unit-input{display:flex;align-items:center;gap:8px}
-    .unit-input .unit{font-weight:700;color:#1f2b1c}
-    .hint{display:block;margin-top:.35rem;color:#315227}
-    .premium-card{border:1px solid #e8efe3;border-radius:12px;padding:14px;background:#fbfdf9}
-    .switch{position:relative;display:inline-flex;align-items:center;gap:.6rem}
-    .switch input{position:absolute;left:0;top:0;width:48px;height:26px;opacity:0;cursor:pointer}
-    .slider{width:48px;height:26px;border-radius:999px;background:#d9e3d3;position:relative;transition:.2s;cursor:pointer}
-    .slider::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
-    .switch input:checked + .slider{background:var(--brand)}
-    .switch input:checked + .slider::after{left:25px}
-    .switch-label{font-weight:700;font-size:.95rem}
-    details summary{cursor:pointer;font-weight:600;color:#224219}
-    .info{font-size:.9rem;color:#233221;line-height:1.45}
-
-    .btn{margin-top:6px;width:100%;background:var(--brand);color:#fff;border:none;border-radius:10px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer}
-    .btn:hover{background:var(--brand-dark)}
-    .footer{margin-top:34px;background:var(--brand);color:#fff;text-align:center;padding:24px 12px;font-size:.95rem}
-    .footer a{color:#fff;text-decoration:underline}
-
-    /* Chart */
     .chart-card{
       max-width:var(--chart-max-width);
-      width:calc(100% - 2rem);
-      margin:0 auto 34px;
+      margin:2rem auto;
       background:#fff;
       border-radius:16px;
       box-shadow:var(--shadow);
@@ -75,303 +32,129 @@
     }
     .chart-head{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap:12px;
-      padding:14px 14px 10px;
+      align-items:center;
+      padding:14px;
       border-bottom:1px solid #eef2ea;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    .chart-head h2{margin:0;font-size:1.05rem}
-    .range-buttons{display:flex;gap:8px;flex-wrap:wrap}
+    .range-buttons{display:flex;gap:8px}
     .range-buttons button{
       border:1px solid #d9e3d3;
       background:#fff;
       border-radius:999px;
-      padding:8px 12px;
+      padding:6px 12px;
       font-weight:700;
       cursor:pointer;
     }
     .range-buttons button.active{
       background:var(--brand);
-      border-color:var(--brand);
       color:#fff;
+      border-color:var(--brand);
     }
-    .chart-body{padding:12px 14px 16px}
-    .chart-note{color:#555;font-size:.9rem;margin:0 0 10px}
-    .chart-error{display:none;color:#b00020;font-weight:700;margin:8px 0 0}
+    .chart-body{padding:12px}
     canvas{max-width:100%}
 
-    @media (max-width:900px){
-      .steps ol{grid-template-columns:1fr 1fr}
-      .row{grid-template-columns:1fr}
-      header{padding:24px 22px;padding-top:calc(24px + env(safe-area-inset-top))}
-    }
+    footer{background:var(--brand);color:#fff;text-align:center;padding:20px}
   </style>
 </head>
 
 <body>
-  <header>
-    <img src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" alt="Logo Raiffeisenmarkt Wiesbach" class="logo" />
-  </header>
 
-  <section class="hero" aria-labelledby="h1">
-    <h1 id="h1">Heizöl Preisrechner – Raiffeisenmarkt Wiesbach im Saarland</h1>
-    <p>Berechnen Sie Ihren Heizölpreis schnell und bequem – ganz einfach online und sofort verfügbar.</p>
-  </section>
+<header>
+  <img src="https://onecdn.io/media/61c27ecc-efc9-4840-9ff3-d13f96ec1316/full" class="logo" alt="">
+</header>
 
-  <section class="steps" aria-label="Schritte">
-    <ol>
-      <li><div class="dot">1</div><div class="txt"><strong>Daten eingeben</strong><br><span>PLZ, Liefermenge &amp; Versandart wählen</span></div></li>
-      <li><div class="dot">2</div><div class="txt"><strong>Preis berechnen</strong><br><span>Individuellen Preis berechnen lassen</span></div></li>
-      <li><div class="dot">3</div><div class="txt"><strong>Bestellung abschicken</strong><br><span>Persönliche Daten bestätigen &amp; Formular verbindlich absenden</span></div></li>
-      <li><div class="dot">4</div><div class="txt"><strong>Lieferung &amp; Zahlung</strong><br><span>Bezahlung bei Lieferung oder per Vorabüberweisung</span></div></li>
-    </ol>
-  </section>
+<section class="hero">
+  <h1>Heizöl-Preisverlauf</h1>
+</section>
 
-  <section class="form-wrap">
-    <form id="oilForm" class="form" novalidate>
-      <div class="row">
-        <div class="form-group">
-          <label for="oilRange">Liefermenge (Liter)*</label>
-          <div class="unit-input">
-            <input type="number" id="oilRange" name="liefermenge" min="100" max="15000" step="100" value="500" inputmode="numeric" required />
-            <span class="unit">L</span>
-          </div>
-          <small class="hint">• Schritte à 100 L •</small>
-        </div>
-
-        <div class="form-group">
-          <label for="plz">Postleitzahl*</label>
-          <input type="text" id="plz" name="plz" maxlength="5" inputmode="numeric" pattern="\d{5}" required placeholder="z. B. 66557" />
-          <p id="errMsg" style="display:none;color:#b00020;font-weight:600;margin:.35rem 0 0" aria-live="assertive">Die eingegebene PLZ liegt nicht im Liefergebiet.</p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="form-group">
-          <label for="ablade">Anzahl der Abladestellen*</label>
-          <select id="ablade" name="ablade" required>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <div class="premium-card" role="group" aria-labelledby="premiumTitle">
-            <div class="switch">
-              <input type="checkbox" id="premium" aria-describedby="premiumHint" />
-              <span class="slider" aria-hidden="true"></span>
-              <label for="premium" class="switch-label" id="premiumTitle">Premium Heizöl</label>
-            </div>
-            <small id="premiumHint" style="display:block;color:#315227;margin-top:.3rem">Aufpreis: +1,50 € je 100 L – wird bei der Berechnung berücksichtigt.</small>
-            <details>
-              <summary>Wissenswertes zu Premium Heizöl</summary>
-              <div class="info">
-                <p>Für alle Ölheizungen geeignet – nach <a href="https://de.wikipedia.org/wiki/Heiz%C3%B6l" target="_blank" rel="noopener">DIN 51603-1</a>.</p>
-                <ul>
-                  <li>Mit Additivpaket: reduzierter Verbrauch</li>
-                  <li>Längere Lebensdauer der Anlage</li>
-                  <li>Weniger Wartungsaufwand</li>
-                  <li>Höhere Betriebssicherheit</li>
-                  <li>Angenehmer Geruch</li>
-                  <li>Umweltschonend (max. 0,005 % Schwefel)</li>
-                </ul>
-                <p>Das Additiv (Wirkstoff) wird mittels Dosiereinrichtung beim Abtanken beigemischt.</p>
-              </div>
-            </details>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn" id="submitBtn" type="submit">Preis berechnen</button>
-    </form>
-  </section>
-
-  <!-- CHART -->
-  <section class="chart-card" aria-label="Heizölpreis-Verlauf">
-    <div class="chart-head">
-      <h2>Heizölpreis-Verlauf</h2>
-      <div class="range-buttons">
-        <button type="button" class="rangeBtn active" data-range="3m">3 Monate</button>
-        <button type="button" class="rangeBtn" data-range="1y">1 Jahr</button>
-        <button type="button" class="rangeBtn" data-range="3y">3 Jahre</button>
-      </div>
+<section class="chart-card">
+  <div class="chart-head">
+    <strong>Preisverlauf</strong>
+    <div class="range-buttons">
+      <button data-range="3m" class="active">3 Monate</button>
+      <button data-range="6m">6 Monate</button>
+      <button data-range="1y">1 Jahr</button>
+      <button data-range="3y">3 Jahre</button>
     </div>
-    <div class="chart-body">
-      <p class="chart-note" id="rangeLabel">Zeitraum: 3 Monate</p>
-      <canvas id="oilChart" height="120"></canvas>
-      <p class="chart-error" id="chartErr"></p>
-    </div>
-  </section>
+  </div>
+  <div class="chart-body">
+    <canvas id="oilChart" height="120"></canvas>
+  </div>
+</section>
 
-  <footer class="footer">
-    <p>© 2025 Raiffeisenmarkt Wiesbach – Alle Rechte vorbehalten</p>
-    <p>
-      <a href="https://raiffeisenmarkt-wiesbach.onepage.me/impressum" target="_blank" rel="noopener">Impressum</a>
-      ·
-      <a href="https://raiffeisenmarkt-wiesbach.onepage.me/datenschutzerklarung" target="_blank" rel="noopener">Datenschutzerklärung</a>
-    </p>
-  </footer>
+<footer>
+  © 2025 Raiffeisenmarkt Wiesbach
+</footer>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js + Date Adapter -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
 
-  <script>
-    // ========= FORM (wie gehabt) =========
-    const oilSlider = document.getElementById('oilRange');
-    const FORM = document.getElementById('oilForm');
-    const BTN  = document.getElementById('submitBtn');
-    const ERR  = document.getElementById('errMsg');
+<script>
+let chart;
 
-    (function(){
-      const MIN = 100, MAX = 15000, STEP = 100;
-      function normalize(v){
-        let n = parseInt(String(v).replace(/\D+/g,''), 10);
-        if (isNaN(n)) n = MIN;
-        n = Math.round(n / STEP) * STEP;
-        n = Math.max(MIN, Math.min(MAX, n));
-        return n;
-      }
-      if(oilSlider){
-        oilSlider.addEventListener('blur',  ()=> oilSlider.value = normalize(oilSlider.value));
-        oilSlider.addEventListener('change',()=> oilSlider.value = normalize(oilSlider.value));
-      }
-    })();
+async function loadChart(range){
+  const res = await fetch(
+    'https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=' + range
+  );
+  const json = await res.json();
 
-    const area1 = ["66260","66262","66265","66272","66273","66274","66275","66280","66281","66282","66284","66287","66288","66289","66292","66293","66294","66295","66299","66337","66338","66340","66341","66346","66511","66512","66513","66514","66515","66516","66517","66518","66519","66520","66521","66522","66531","66538","66539","66540","66549","66550","66552","66553","66557","66558","66559","66560","66564","66565","66566","66567","66571","66572","66573","66575","66578","66579","66580","66583","66584","66585","66587","66589","66591","66592","66593","66594","66595","66596","66597","66630","66631","66632","66633","66636","66641","66642","66643","66646","66791","66792","66793","66807","66809","66811","66812","66813","66814","66819","66822","66832","66833","66835","66836","66839"];
-    const area2 = ["66459","66640","66629","66701","66740","66763","66773","66774","66775","66777","66787","66780","66794","66795","66798","66802","66000","66001","66002","66003","66004","66005","66006","66007","66008","66009","66010","66011","66012","66013","66014","66015","66016","66017","66019","66020","66021","66022","66023","66024","66025","66026","66027","66028","66029","66030","66031","66032","66033","66042","66043","66044","66045","66046","66047","66051","66053","66055","66057","66059","66060","66061","66063","66065","66067","66090","66091","66092","66093","66094","66095","66099","66100","66101","66102","66103","66104","66105","66106","66107","66108","66109","66111","66113","66115","66117","66119","66121","66123","66125","66126","66127","66128","66129","66130","66131","66132","66133","66140","66141","66142","66143","66150","66200","66259","66353","66354","66355","66359","66361","66362","66363","66364","66365","66366","66367","66368","66369","66370","66376","66377","66386","66803","66804","66806","66333"];
-    const area3 = ["66687","66129","66130","66629","66271","66352","66399","66424","66679","66693","66706","66709","66780","66798","66802","66440","66453","66620","66625","66663"];
+  const points = json.labels.map((d,i)=>({
+    x: d,      // YYYY-MM-DD
+    y: json.data[i]
+  }));
 
-    function areaByPlz(plz){
-      if (area1.includes(plz)) return 'Area 1';
-      if (area2.includes(plz)) return 'Area 2';
-      if (area3.includes(plz)) return 'Area 3';
-      return '';
-    }
+  if(chart) chart.destroy();
 
-    document.getElementById('plz').addEventListener('input', (e)=>{
-      const plz = e.target.value.replace(/\D+/g,'').slice(0,5);
-      e.target.value = plz;
-      const a = areaByPlz(plz);
-      ERR.style.display = a ? 'none' : (plz.length === 5 ? 'block' : 'none');
-    });
-
-    const premiumCheckbox = document.getElementById('premium');
-    const premiumSlider   = document.querySelector('.switch .slider');
-    if (premiumSlider){
-      premiumSlider.addEventListener('click', ()=>{ premiumCheckbox.checked = !premiumCheckbox.checked; });
-    }
-
-    FORM.addEventListener('submit', async (ev)=>{
-      ev.preventDefault();
-
-      const liefermenge   = parseInt(oilSlider.value,10);
-      const plz           = document.getElementById('plz').value.trim();
-      const abladestellen = parseInt(document.getElementById('ablade').value,10);
-      const premium       = document.getElementById('premium').checked;
-      const area          = areaByPlz(plz);
-
-      if (!area){ ERR.style.display='block'; return; }
-
-      const payload = { liefermenge, plz, abladestellen, area, premium };
-
-      BTN.disabled = true; BTN.textContent = 'Berechne…';
-      try{
-        const res = await fetch('https://n8n.srv899952.hstgr.cloud/webhook/oelrechner',{
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const text = await res.text();
-        if(!res.ok) throw new Error('HTTP '+res.status+' | '+text.slice(0,200));
-        let data; try{ data = JSON.parse(text) } catch{ throw new Error('Antwort kein JSON: '+text.slice(0,200)); }
-        const result = Array.isArray(data) ? data[0] : data;
-
-        sessionStorage.setItem('oelForm', JSON.stringify({
-          eingabe: { liefermenge, plz, abladestellen, area, premium },
-          berechnung: result,
-          timestamp: Date.now()
-        }));
-
-        window.location.href = './seite2.html';
-      } catch(err){
-        alert('Fehler: '+err.message);
-      } finally {
-        BTN.disabled = false; BTN.textContent = 'Preis berechnen';
-      }
-    });
-
-    // ========= CHART =========
-    const chartErr = document.getElementById('chartErr');
-    const rangeLabel = document.getElementById('rangeLabel');
-    const rangeBtns = Array.from(document.querySelectorAll('.rangeBtn'));
-
-    let chartInstance = null;
-
-    function setActiveRangeBtn(range){
-      rangeBtns.forEach(b => b.classList.toggle('active', b.dataset.range === range));
-      const label = range === '3m' ? '3 Monate' : (range === '1y' ? '1 Jahr' : '3 Jahre');
-      rangeLabel.textContent = 'Zeitraum: ' + label;
-    }
-
-    async function loadChart(range){
-      chartErr.style.display = 'none';
-      chartErr.textContent = '';
-
-      setActiveRangeBtn(range);
-
-      const url = `https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=${encodeURIComponent(range)}`;
-
-      let json;
-      try{
-        const res = await fetch(url);
-        const text = await res.text();
-        json = JSON.parse(text);
-
-        if(!json || !Array.isArray(json.labels) || !Array.isArray(json.data)){
-          throw new Error('Unerwartete Antwort vom Chart-Webhook');
-        }
-      } catch(e){
-        chartErr.style.display = 'block';
-        chartErr.textContent = 'Chart konnte nicht geladen werden: ' + e.message;
-        return;
-      }
-
-      const ctx = document.getElementById('oilChart');
-
-      if(chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: json.labels,
-          datasets: [{
-            label: 'Heizölpreis',
-            data: json.data,
-            borderColor: '#6EC054',
-            backgroundColor: 'rgba(110,192,84,0.15)',
-            tension: 0.3,
-            fill: true,
-            pointRadius: 2
-          }]
+  chart = new Chart(document.getElementById('oilChart'),{
+    type:'line',
+    data:{
+      datasets:[{
+        data: points,
+        borderColor:'#6EC054',
+        backgroundColor:'rgba(110,192,84,.15)',
+        fill:true,
+        tension:.35,
+        pointRadius:0
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{
+          type:'time',
+          time:{
+            unit:'month',
+            displayFormats:{ month:'MMM yyyy' }
+          },
+          ticks:{
+            maxRotation:0,
+            autoSkip:true
+          },
+          grid:{display:false}
         },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: false } }
+        y:{
+          ticks:{callback:v=>v+' €'}
         }
-      });
+      }
     }
+  });
 
-    rangeBtns.forEach(btn => {
-      btn.addEventListener('click', () => loadChart(btn.dataset.range));
-    });
+  document
+    .querySelectorAll('.range-buttons button')
+    .forEach(b=>b.classList.toggle('active', b.dataset.range===range));
+}
 
-    // initial
-    loadChart('3m');
-  </script>
+document
+  .querySelectorAll('.range-buttons button')
+  .forEach(b=>b.addEventListener('click',()=>loadChart(b.dataset.range)));
+
+loadChart('3m');
+</script>
+
 </body>
 </html>
