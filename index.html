@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Ölpreisrechner</title>
-  <!-- Favicon -->
   <link rel="icon" href="https://onecdn.io/media/96d496c9-3b9e-451e-ab59-264290e9b0cf/full" sizes="any" />
   <meta name="theme-color" content="#6EC054" />
   <style>
@@ -75,7 +74,7 @@
     .footer{margin-top:34px;background:var(--brand);color:#fff;text-align:center;padding:24px 12px;font-size:.95rem}
     .footer a{color:#fff;text-decoration:underline}
 
-    /* ====== NEU: Chart Card (Canvas statt iframe) ====== */
+    /* ====== Chart Card ====== */
     .chart-card{
       max-width:var(--chart-max-width);
       width:calc(100% - 2rem);
@@ -113,6 +112,9 @@
     .chart-body{padding:12px 14px 16px}
     .chart-note{color:#555;font-size:.9rem;margin:0 0 10px}
     .chart-error{display:none;color:#b00020;font-weight:700;margin:8px 0 0}
+
+    /* Fix: Chart-Höhe stabil */
+    #oilChartWrap{position:relative;height:260px}
     canvas{max-width:100%}
 
     @media (min-width:901px){
@@ -133,6 +135,7 @@
         padding-left:calc(22px + env(safe-area-inset-left));
         padding-right:calc(22px + env(safe-area-inset-right));
       }
+      #oilChartWrap{height:220px}
     }
   </style>
 </head>
@@ -163,18 +166,7 @@
           <label for="oilRange">Liefermenge (Liter)*</label>
           <div class="number-wrap">
             <div class="unit-input">
-              <input
-                type="number"
-                id="oilRange"
-                name="liefermenge"
-                min="100"
-                max="15000"
-                step="100"
-                value="500"
-                inputmode="numeric"
-                required
-                placeholder="z. B. 2.000"
-              />
+              <input type="number" id="oilRange" name="liefermenge" min="100" max="15000" step="100" value="500" inputmode="numeric" required />
               <span class="unit">L</span>
             </div>
             <small class="hint">• Schritte à 100 L •</small>
@@ -207,21 +199,6 @@
               <label for="premium" class="switch-label" id="premiumTitle">Premium Heizöl</label>
             </div>
             <small id="premiumHint" class="muted" style="display:block;color:#315227;margin-top:.3rem">Aufpreis: +1,50 € je 100 L – wird bei der Berechnung berücksichtigt.</small>
-            <details>
-              <summary>Wissenswertes zu Premium Heizöl</summary>
-              <div class="info">
-                <p>Für alle Ölheizungen geeignet – nach <a href="https://de.wikipedia.org/wiki/Heiz%C3%B6l" target="_blank" rel="noopener">DIN 51603-1</a>.</p>
-                <ul>
-                  <li>Mit Additivpaket: reduzierter Verbrauch</li>
-                  <li>Längere Lebensdauer der Anlage</li>
-                  <li>Weniger Wartungsaufwand</li>
-                  <li>Höhere Betriebssicherheit</li>
-                  <li>Angenehmer Geruch</li>
-                  <li>Umweltschonend (max. 0,005 % Schwefel)</li>
-                </ul>
-                <p>Das Additiv (Wirkstoff) wird mittels Dosiereinrichtung beim Abtanken beigemischt.</p>
-              </div>
-            </details>
           </div>
         </div>
       </div>
@@ -230,7 +207,7 @@
     </form>
   </section>
 
-  <!-- ====== NEU: CHART (3m / 6m / 1y / 3y) ====== -->
+  <!-- CHART -->
   <section class="chart-card" aria-label="Heizölpreis-Verlauf">
     <div class="chart-head">
       <h2>Heizölpreis-Verlauf</h2>
@@ -243,7 +220,9 @@
     </div>
     <div class="chart-body">
       <p class="chart-note" id="rangeLabel">Zeitraum: 3 Monate</p>
-      <canvas id="oilChart" height="120"></canvas>
+      <div id="oilChartWrap">
+        <canvas id="oilChart"></canvas>
+      </div>
       <p class="chart-error" id="chartErr"></p>
     </div>
   </section>
@@ -257,116 +236,145 @@
     </p>
   </footer>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
-<!-- Time Adapter (WICHTIG für type:'time') -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
+  <!-- Chart.js + Time Adapter -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
 
-<script>
-  const chartErr = document.getElementById('chartErr');
-  const rangeLabel = document.getElementById('rangeLabel');
-  const rangeBtns = Array.from(document.querySelectorAll('.rangeBtn'));
-  let chartInstance = null;
+  <script>
+    // ========= FORM (wie gehabt) =========
+    const oilSlider = document.getElementById('oilRange');
+    const FORM = document.getElementById('oilForm');
+    const BTN  = document.getElementById('submitBtn');
+    const ERR  = document.getElementById('errMsg');
 
-  function setActiveRangeBtn(range){
-    rangeBtns.forEach(b => b.classList.toggle('active', b.dataset.range === range));
-    const label =
-      range === '3m' ? '3 Monate' :
-      range === '6m' ? '6 Monate' :
-      range === '1y' ? '1 Jahr' :
-      range === '3y' ? '3 Jahre' : range;
-
-    rangeLabel.textContent = 'Zeitraum: ' + label;
-  }
-
-  async function loadChart(range){
-    chartErr.style.display = 'none';
-    chartErr.textContent = '';
-    setActiveRangeBtn(range);
-
-    // Cachebuster, damit 6m/1y nicht "wie 3m" gecached wird
-    const url = `https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=${encodeURIComponent(range)}&_=${Date.now()}`;
-
-    let payload;
-    try{
-      const res = await fetch(url, { method: 'GET', cache: 'no-store' });
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      payload = await res.json();
-
-      // falls n8n als Array zurückkommt: [{...}]
-      if (Array.isArray(payload)) payload = payload[0];
-
-      // optional: wenn du später Monatsdaten sendest:
-      const labels = Array.isArray(payload.monthLabels) ? payload.monthLabels : payload.labels;
-      const data   = Array.isArray(payload.monthData)   ? payload.monthData   : payload.data;
-
-      if(!payload || !Array.isArray(labels) || !Array.isArray(data) || labels.length !== data.length){
-        throw new Error('Unerwartete Antwort: labels/data fehlen oder Länge passt nicht');
+    (function(){
+      const MIN = 100, MAX = 15000, STEP = 100;
+      function normalize(v){
+        let n = parseInt(String(v).replace(/\D+/g,''), 10);
+        if (isNaN(n)) n = MIN;
+        n = Math.round(n / STEP) * STEP;
+        n = Math.max(MIN, Math.min(MAX, n));
+        return n;
       }
+      if(oilSlider){
+        oilSlider.addEventListener('blur',  ()=> oilSlider.value = normalize(oilSlider.value));
+        oilSlider.addEventListener('change',()=> oilSlider.value = normalize(oilSlider.value));
+      }
+    })();
 
-      // Punkte für Time-Scale (labels müssen "YYYY-MM-DD" sein)
-      const points = labels.map((d, i) => ({ x: d, y: data[i] }));
+    // ========= CHART (funktioniert sicher + Cache-Fix + Monats-Achse) =========
+    const chartErr = document.getElementById('chartErr');
+    const rangeLabel = document.getElementById('rangeLabel');
+    const rangeBtns = Array.from(document.querySelectorAll('.rangeBtn'));
+    let chartInstance = null;
 
-      const ctx = document.getElementById('oilChart');
-      if(chartInstance) chartInstance.destroy();
+    function setActiveRangeBtn(range){
+      rangeBtns.forEach(b => b.classList.toggle('active', b.dataset.range === range));
+      const label =
+        range === '3m' ? '3 Monate' :
+        range === '6m' ? '6 Monate' :
+        range === '1y' ? '1 Jahr' :
+        range === '3y' ? '3 Jahre' : range;
+      rangeLabel.textContent = 'Zeitraum: ' + label;
+    }
 
-      chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          datasets: [{
-            label: 'Heizölpreis',
-            data: points,
-            borderColor: '#6EC054',
-            backgroundColor: 'rgba(110,192,84,0.15)',
-            tension: 0.3,
-            fill: true,
-            pointRadius: 0,
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => ` ${ctx.parsed.y} €`
+    async function loadChart(range){
+      chartErr.style.display = 'none';
+      chartErr.textContent = '';
+      setActiveRangeBtn(range);
+
+      // Cachebuster, damit 6m/1y nicht wie 3m "gecacht" wird
+      const url = `https://n8n.srv899952.hstgr.cloud/webhook/oelchart?range=${encodeURIComponent(range)}&_=${Date.now()}`;
+
+      let payload;
+      try{
+        const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+
+        payload = await res.json();
+        if (Array.isArray(payload)) payload = payload[0];
+
+        const labels = payload?.labels;
+        const data   = payload?.data;
+
+        if(!payload || !Array.isArray(labels) || !Array.isArray(data) || labels.length !== data.length){
+          throw new Error('Unerwartete Antwort: labels/data fehlen oder Länge passt nicht');
+        }
+
+        // Punkte für Time-Scale (labels müssen "YYYY-MM-DD" sein)
+        const points = labels.map((d, i) => ({ x: d, y: data[i] }));
+
+        const ctx = document.getElementById('oilChart');
+        if(chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            datasets: [{
+              label: 'Heizölpreis',
+              data: points,
+              borderColor: '#6EC054',
+              backgroundColor: 'rgba(110,192,84,0.15)',
+              tension: 0.3,
+              fill: true,
+              pointRadius: 0,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: (items) => {
+                    // Datum schön im Tooltip: DD.MM.YYYY
+                    const d = items?.[0]?.parsed?.x;
+                    if (!d) return '';
+                    const dt = new Date(d);
+                    const dd = String(dt.getDate()).padStart(2,'0');
+                    const mm = String(dt.getMonth()+1).padStart(2,'0');
+                    const yy = dt.getFullYear();
+                    return `${dd}.${mm}.${yy}`;
+                  },
+                  label: (ctx) => ` ${ctx.parsed.y} €`
+                }
+              }
+            },
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: { month: 'MM/yy' }
+                },
+                ticks: {
+                  maxRotation: 0,
+                  autoSkip: true,
+                  maxTicksLimit: 8
+                },
+                grid: { display: false }
+              },
+              y: {
+                beginAtZero: false,
+                ticks: { callback: (v) => v + ' €' }
               }
             }
-          },
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'month',
-                displayFormats: { month: 'MM/yy' }
-              },
-              ticks: {
-                maxRotation: 0,
-                autoSkip: true
-              },
-              grid: { display: false }
-            },
-            y: {
-              beginAtZero: false,
-              ticks: { callback: (v) => v + ' €' }
-            }
           }
-        }
-      });
+        });
 
-    } catch(e){
-      chartErr.style.display = 'block';
-      chartErr.textContent = 'Chart konnte nicht geladen werden: ' + e.message;
+      } catch(e){
+        chartErr.style.display = 'block';
+        chartErr.textContent = 'Chart konnte nicht geladen werden: ' + e.message;
+      }
     }
-  }
 
-  rangeBtns.forEach(btn => {
-    btn.addEventListener('click', () => loadChart(btn.dataset.range));
-  });
+    rangeBtns.forEach(btn => {
+      btn.addEventListener('click', () => loadChart(btn.dataset.range));
+    });
 
-  loadChart('3m');
-</script>
+    loadChart('3m');
+  </script>
 </body>
 </html>
