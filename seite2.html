@@ -421,7 +421,10 @@
 
     const badge = document.getElementById('premiumBadge'); if(badge) badge.hidden = !inp.premium;
 
-    fill('plz', inp.plz||'—'); fill('ablade', numf(inp.abladestellen||1));
+    fill('plz', inp.plz || '—');
+    fill('liefermenge', (inp.liefermengeL ? (numf(inp.liefermengeL) + ' L') : '—'));
+    fill('ablade', numf(inp.abladestellen || 1));
+
 
     const price100Base = Number(k.endpreisPro100L ?? (f.endpreisPro100L ? Number(String(f.endpreisPro100L).replace(/[^0-9,.-]/g,'').replace(',','.')): NaN));
 
