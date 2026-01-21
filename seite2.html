@@ -579,8 +579,11 @@
         fill('cGross', euro(bruttoNeu));
         openConfirm();
 
-        // Weiterleitung nach erfolgreicher Bestellung
-        window.location.href = 'https://www.raiffeisenmarkt-wiesbach.de/';
+        // Weiterleitung nach erfolgreicher Bestellung (z.B. nach 5 Sekunden)
+        setTimeout(() => {
+          window.location.href = 'https://www.raiffeisenmarkt-wiesbach.de/';
+        }, 5000);
+
 
       }catch(err){
         showToast('Fehler beim Senden: '+err.message, true);
