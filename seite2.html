@@ -578,6 +578,10 @@
         fill('cVat', euro(mwstNeu) + ` (${MWST_SATZ}%)`);
         fill('cGross', euro(bruttoNeu));
         openConfirm();
+
+        // Weiterleitung nach erfolgreicher Bestellung
+        window.location.href = 'https://www.raiffeisenmarkt-wiesbach.de/';
+
       }catch(err){
         showToast('Fehler beim Senden: '+err.message, true);
         if(!toast) alert('Fehler beim Senden: '+err.message);
@@ -660,7 +664,7 @@
                 x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
                 y: {
                   min: 60,
-                  max: 100,
+                  max: 150,
                   ticks: { callback: (v)=> `${v}` }
                 }
               }
