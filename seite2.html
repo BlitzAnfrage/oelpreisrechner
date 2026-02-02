@@ -157,6 +157,20 @@
       .row{flex-direction:column;align-items:flex-start}
       .confirm .grid2{grid-template-columns:1fr}
       .newsletter{grid-template-columns:1fr}
+
+      /* NUR Mobil: Abstand rund um Newsletter-Block reduzieren */
+      .newsletter{
+        margin:10px 0;        /* weniger Luft oben/unten */
+        padding:10px;         /* etwas kompakter */
+        gap:10px;
+      }
+      /* NUR Mobil: Bild kompakter (weniger "Leerraum") */
+      .newsletter img{
+        height:160px;         /* reduziert die Höhe auf Mobil */
+        width:100%;
+        object-fit:cover;     /* schneidet ggf. Leerflächen weg */
+        object-position:center;
+      }
     }
 
     /* ===== NUR hinzugefügt: Chart UI (ohne bestehende Styles zu verändern) ===== */
@@ -190,8 +204,10 @@
       background:#fff;
       color:#184b10;
       font-weight:900;
-      font-size:12px; /* unverändert (war bereits so) */
+      font-size:12px; /* unverändert */
       line-height:1;
+      position:relative;
+      z-index:60;
     }
     .info-details summary::-webkit-details-marker{display:none}
 
@@ -209,20 +225,30 @@
       padding:12px 14px;
       box-shadow:var(--shadow);
 
-      font-size:.88rem; /* unverändert (war bereits so) */
+      font-size:.88rem; /* unverändert */
       font-weight:600;
       color:#1f2b1c;
       z-index:50;
     }
 
-    /* Fix: auf Mobile immer vollständig sichtbar (kein Abschneiden) */
+    /* NUR Mobil: Info als "richtiges" mittiges Popup */
     @media (max-width:600px){
+      .info-details[open]::before{
+        content:"";
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.35);
+        z-index:9998;
+      }
+      .info-details summary{z-index:10000}
       .info-box{
-        left:12px;
-        right:12px;
-        transform:none;
-        width:auto;
+        position:fixed;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-50%);
+        width:min(92vw, 360px);
         max-width:none;
+        z-index:10001;
       }
     }
   </style>
