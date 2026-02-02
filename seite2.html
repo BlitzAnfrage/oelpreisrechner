@@ -298,7 +298,6 @@
           <div class="row"><div class="k">PLZ</div><div class="v" id="plz">—</div></div>
           <div class="row"><div class="k">Liefermenge</div><div class="v" id="liefermenge">—</div></div>
           <div class="row"><div class="k">Abladestellen</div><div class="v" id="ablade">—</div></div>
-          <div class="row"><div class="k">Warenwert netto</div><div class="v" id="warenwert">—</div></div>
           <div class="row"><div class="k">Lieferpauschale</div><div class="v" id="pauschale">—</div></div>
           <div class="row"><div class="k">Zwischensumme netto</div><div class="v" id="netto">—</div></div>
           <div class="row" id="invoiceRow" style="display:none"><div class="k">Aufpreis Rechnung</div><div class="v" id="invoice">—</div></div>
@@ -534,8 +533,7 @@
     const lpText = (t.lieferpauschaleEinheit!=null && t.lieferpauschaleAnzahl!=null)
       ? `${t.lieferpauschaleAnzahl} × ${euro(t.lieferpauschaleEinheit)} = ${euro(t.lieferpauschale)}`
       : (f.lieferpauschale || euro(t.lieferpauschale));
-
-    fill('warenwert', f.warenwertNetto || euro(t.warenwertNetto));
+    
     fill('pauschale', lpText);
     fill('netto', f.zwischensummeNetto || euro(t.zwischensummeNetto));
 
