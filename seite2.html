@@ -172,60 +172,77 @@
     @media (max-width:820px){ .chart-wrap{height:220px} }
 
     /* ===== Klick-Info für Rechnung (Mobile-freundlich) ===== */
-    .info-details{
-      display:inline-block;
-      margin-left:6px;
-      position:relative;
-    }
-    .info-details summary{
-      list-style:none;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:18px;
-      height:18px;
-      border-radius:999px;
-      border:1px solid #cfeacc;
-      background:#fff;
-      color:#184b10;
-      font-weight:900;
-      font-size:12px; /* unverändert (war bereits so) */
-      line-height:1;
-    }
-    .info-details summary::-webkit-details-marker{display:none}
+.info-details{
+  display:inline-block;
+  margin-left:6px;
+  position:relative;
+}
 
-    .info-box{
-      position:absolute;
-      top:30px;
-      left:50%;
-      transform:translateX(-50%);
-      width:calc(100vw - 48px);
-      max-width:320px;
+.info-details summary{
+  list-style:none;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  border:1px solid #cfeacc;
+  background:#fff;
+  color:#184b10;
+  font-weight:900;
+  font-size:12px; /* unverändert */
+  line-height:1;
+}
 
-      background:#fff;
-      border:1px solid #e8efe3;
-      border-radius:12px;
-      padding:12px 14px;
-      box-shadow:var(--shadow);
+.info-details summary::-webkit-details-marker{display:none}
 
-      font-size:.88rem; /* unverändert (war bereits so) */
-      font-weight:600;
-      color:#1f2b1c;
-      z-index:50;
-    }
+.info-box{
+  position:absolute;
+  top:30px;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100vw - 48px);
+  max-width:320px;
 
-    /* Fix: auf Mobile immer vollständig sichtbar (kein Abschneiden) */
-    @media (max-width:600px){
-      .info-box{
-        left:12px;
-        right:12px;
-        transform:none;
-        width:auto;
-        max-width:none;
-      }
-    }
-  </style>
+  background:#fff;
+  border:1px solid #e8efe3;
+  border-radius:12px;
+  padding:12px 14px;
+  box-shadow:var(--shadow);
+
+  font-size:.88rem; /* unverändert */
+  font-weight:600;
+  color:#1f2b1c;
+  z-index:50;
+}
+
+/* Mobile: als Inline-Box (kein Tooltip-Abschneiden, bessere UX) */
+@media (max-width:600px){
+  /* i-Icon bleibt rechts in der Zeile */
+  .info-details{
+    margin-left:auto;
+  }
+
+  /* wenn geöffnet: nimmt volle Breite ein, Box erscheint darunter */
+  .info-details[open]{
+    width:100%;
+    margin-left:0;
+  }
+
+  .info-details[open] summary{
+    margin-left:auto;
+  }
+
+  .info-box{
+    position:static;
+    transform:none;
+    width:100%;
+    max-width:none;
+
+    margin-top:10px;
+  }
+}
 
   <!-- NUR hinzugefügt: Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
