@@ -61,6 +61,14 @@
     .unit-input .unit{font-weight:700;color:#1f2b1c}
     .hint{display:block;margin-top:.35rem;color:#315227}
 
+    /* ===== NUR MOBILE-OPTIMIERUNG (kein Layout-Überlauf nach rechts) ===== */
+    .unit-input{width:100%}
+    .unit-input input{
+      flex:1 1 auto;
+      min-width:0;
+      width:100%;
+    }
+
     .range-wrap{position:relative;padding-top:22px}
     #oilRange{width:100%;}
 
@@ -119,6 +127,14 @@
     @media (max-width:900px){
       .steps ol{grid-template-columns:1fr 1fr}
       .row{grid-template-columns:1fr;margin-bottom:24px}
+
+      /* ===== NUR MOBILE-OPTIMIERUNG (alles starr/zentriert, kein Shift nach rechts) ===== */
+      .form-wrap{padding-left:12px; padding-right:12px}
+      .steps{width:100%}
+      .form{width:100%; padding-left:18px; padding-right:18px}
+      .chart-card{width:100%}
+      input[type="number"], input[type="text"], select{width:100%}
+
       header{
         padding:24px 22px;
         padding-top:calc(24px + constant(safe-area-inset-top));
