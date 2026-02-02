@@ -213,22 +213,48 @@
 }
 
 /* ===== Info-Icon neben "Rechnung" ===== */
-.info{
+/* Klick-Info für Rechnung (Mobile-freundlich) */
+.info-details{
+  display:inline-block;
+  margin-left:6px;
+  position:relative;
+}
+
+.info-details summary{
+  list-style:none;
+  cursor:pointer;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   width:18px;
   height:18px;
-  margin-left:6px;
   border-radius:999px;
   border:1px solid #cfeacc;
   background:#fff;
   color:#184b10;
   font-weight:900;
   font-size:12px;
-  line-height:1;
-  cursor:help;
-  user-select:none;
+}
+
+.info-details summary::-webkit-details-marker{
+  display:none;
+}
+
+.info-box{
+  position:absolute;
+  top:26px;
+  left:0;
+  min-width:220px;
+  max-width:260px;
+  background:#fff;
+  border:1px solid #e8efe3;
+  border-radius:12px;
+  padding:10px 12px;
+  box-shadow:var(--shadow);
+  font-size:.88rem;
+  font-weight:600;
+  color:#1f2b1c;
+  z-index:20;
 }
 </style>
 
