@@ -308,24 +308,49 @@
       </div>
     </section>
 
-    <div class="card order-card" style="margin-top:14px">
-      <div class="hdr"><strong>Jetzt verbindlich bestellen</strong></div>
-      <div class="body">
-        <form class="order-form" id="orderForm" novalidate>
-          <section class="fieldset">
-            <p class="legend-title">Zahlungsmethode</p>
-            <div class="choices">
-              <label class="choice"><input type="radio" name="payment" value="Barzahlung" required> Barzahlung</label>
-              <label class="choice"><input type="radio" name="payment" value="EC-Karte"> EC-Karte</label>
-              <label class="choice"><input type="radio" name="payment" value="Vorabüberweisung"> Vorabüberweisung</label>
-              <label class="choice">
-              <input type="radio" name="payment" value="Rechnung">
-                Rechnung <small>(+0,02 € / L)</small>
-                <span class="info" title="Der Kauf auf Rechnung ist Bestandskunden nach positiver Prüfung vorbehalten. Für Neukunden steht diese Zahlungsart derzeit nicht zur Verfügung.">i</span>
-                </label>
-            </div>
-          </section>
+<div class="card order-card" style="margin-top:14px">
+  <div class="hdr"><strong>Jetzt verbindlich bestellen</strong></div>
+  <div class="body">
+    <form class="order-form" id="orderForm" novalidate>
 
+      <section class="fieldset">
+        <p class="legend-title">Zahlungsmethode</p>
+        <div class="choices">
+
+          <label class="choice">
+            <input type="radio" name="payment" value="Barzahlung" required>
+            Barzahlung
+          </label>
+
+          <label class="choice">
+            <input type="radio" name="payment" value="EC-Karte">
+            EC-Karte
+          </label>
+
+          <label class="choice">
+            <input type="radio" name="payment" value="Vorabüberweisung">
+            Vorabüberweisung
+          </label>
+
+          <label class="choice">
+            <input type="radio" name="payment" value="Rechnung">
+            Rechnung <small>(+0,02 € / L)</small>
+
+            <details class="info-details">
+              <summary aria-label="Info zur Zahlung auf Rechnung">i</summary>
+              <div class="info-box">
+                Der Kauf auf Rechnung ist Bestandskunden nach positiver Prüfung vorbehalten.<br><br>
+                Für Neukunden steht diese Zahlungsart derzeit nicht zur Verfügung.
+              </div>
+            </details>
+          </label>
+
+        </div>
+      </section>
+
+    </form>
+  </div>
+</div>
           <section class="fieldset">
             <p class="legend-title">Lieferzeit</p>
             <div class="choices">
