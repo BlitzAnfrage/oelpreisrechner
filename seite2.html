@@ -598,7 +598,16 @@
       const mwstNeu = mwstBaseNum + surchargesNet * MWST_RATE; mwstEl.textContent = euro(mwstNeu) + ` (${MWST_SATZ}%)`;
       const bruttoNeu = baseBrutto + surchargesNet * (1 + MWST_RATE); priceBigEl.textContent = euro(bruttoNeu);
       const nettoBase = Number(t.zwischensummeNetto || 0); priceNetMainEl.textContent = euro(nettoBase + surchargesNet);
-      const addPer100L = isInvoiceSelected() ? 2 : 0;
+      const addInvoicePer100L = isInvoiceSelected() ? 2 : 0;
+
+      // Express (fix 100€) auf 100L umlegen: 100€ / Liter * 100
+      const addExpressPer100L =
+        (isExpressSelected() && inp.liefermengeL > 0)
+          ? (EXPRESS_SURCHARGE / inp.liefermengeL) * 100
+          : 0;
+
+      const addPer100L = addInvoicePer100L + addExpressPer100L;
+
       const net100 = isFinite(price100Base) ? price100Base + addPer100L : NaN;
       const brutto100 = isFinite(net100) ? net100 * (1 + MWST_RATE) : NaN;
       preis100NetEl.textContent = isFinite(net100) ? euro(net100) : '—';
@@ -633,7 +642,17 @@
       const surchargesNet = invoiceNet + expressNet;
       const mwstNeu = Number(t.mwstBetrag||0) + surchargesNet * MWST_RATE;
       const bruttoNeu = Number(t.gesamtBrutto||0) + surchargesNet * (1 + MWST_RATE);
-      const addPer100L = isInvoiceSelected() ? 2 : 0; const net100 = isFinite(Number(price100Base)) ? Number(price100Base) + addPer100L : null; const brutto100 = net100!=null ? net100 * (1 + MWST_RATE) : null;
+      const addInvoicePer100L = isInvoiceSelected() ? 2 : 0;
+
+      const addExpressPer100L =
+        (isExpressSelected() && inp.liefermengeL > 0)
+          ? (EXPRESS_SURCHARGE / inp.liefermengeL) * 100
+          : 0;
+
+      const addPer100L = addInvoicePer100L + addExpressPer100L;
+
+      const net100 = isFinite(Number(price100Base)) ? Number(price100Base) + addPer100L : null;
+      const brutto100 = net100!=null ? net100 * (1 + MWST_RATE) : null;
 
       const payload = {
         order:{
